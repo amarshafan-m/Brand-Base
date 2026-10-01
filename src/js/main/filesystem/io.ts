@@ -8,14 +8,32 @@ const fsp = fs?.promises;
 // Backward-compatible rimraf for Node.js 10 (Premiere 2020)
 export function safeDelete(targetPath: string) {
     if (!fs || !fs.existsSync(targetPath)) return;
-    const stat = fs.statSync(targetPath);
-    if (stat.isDirectory()) {
-        fs.readdirSync(targetPath).forEach((file: string) => {
-            safeDelete(path.join(targetPath, file));
-        });
-        fs.rmdirSync(targetPath);
-    } else {
-        fs.unlinkSync(targetPath);
+    try {
+        const stat = fs.statSync(targetPath);
+        if (stat.isDirectory()) {
+            fs.readdirSync(targetPath).forEach((file: string) => {
+                safeDelete(path.join(targetPath, file));
+            });
+            fs.rmdirSync(targetPath);
+        } else {
+            fs.unlinkSync(targetPath);
+        }
+    } catch (err) {
+        // If Node.js fails to delete due to locks/permissions, forcefully use native OS commands
+        try {
+            const execSync = window.require ? window.require("child_process").execSync : null;
+            if (execSync) {
+                // @ts-ignore
+                const isWin = window.require("os").platform() === "win32";
+                if (isWin) {
+                    execSync(`rmdir /s /q "${targetPath}"`);
+                } else {
+                    execSync(`rm -rf "${targetPath}"`);
+                }
+            }
+        } catch (e) {
+            console.error("Force delete also failed", e);
+        }
     }
 }
 
