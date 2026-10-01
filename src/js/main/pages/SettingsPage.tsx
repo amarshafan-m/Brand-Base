@@ -11,12 +11,12 @@ import type { BrandBaseSettings } from "../domain/models";
 
 function SettingRow({ children, detail, control }: { children: React.ReactNode; detail: string; control: React.ReactNode }) {
   return (
-    <div className="setting-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid var(--border)', flexShrink: 0, minWidth: 0 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 150px', minWidth: 0 }}>
-        <strong style={{ fontSize: '14px', color: 'var(--text-main)', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{children}</strong>
-        <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{detail}</p>
+    <div className="setting-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'flex-start', padding: '16px', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 120px', minWidth: '120px', maxWidth: '100%' }}>
+        <strong style={{ fontSize: '14px', color: 'var(--text-main)', marginBottom: '6px', wordBreak: 'break-word', lineHeight: '1.4' }}>{children}</strong>
+        <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)', wordBreak: 'break-word', lineHeight: '1.4' }}>{detail}</p>
       </div>
-      <div style={{ flexShrink: 0 }}>{control}</div>
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', maxWidth: '100%' }}>{control}</div>
     </div>
   );
 }
