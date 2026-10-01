@@ -15,7 +15,7 @@ export interface UpdateInfo {
 
 export class UpdaterService {
   private repo = "amarshafan-m/Brand-Base";
-  private currentVersion = "1.0.1"; // Should ideally be read from package.json/manifest, hardcoded for now based on v1.0.0
+  private currentVersion = "1.0.2"; // Should ideally be read from package.json/manifest, hardcoded for now based on v1.0.0
 
   public async checkForUpdates(): Promise<UpdateInfo> {
     if (!https) return { hasUpdate: false, latestVersion: this.currentVersion, releaseNotes: "", downloadUrl: null };
@@ -86,7 +86,9 @@ export class UpdaterService {
             try {
               // Get the extension's root directory
               // @ts-ignore
-              const extensionPath = window.cep.fs.getInitPath();
+              const csInterface = new window.CSInterface();
+              // @ts-ignore
+              const extensionPath = csInterface.getSystemPath(window.SystemPath.EXTENSION);
               
               const zip = new AdmZip(tmpFile);
               // Extract and overwrite everything

@@ -1,7 +1,7 @@
 {
   "name": "com.brandbase.premiere.cep",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Aryanandha",
   "type": "module",
   "scripts": {
