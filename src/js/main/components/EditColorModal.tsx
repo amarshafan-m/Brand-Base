@@ -149,6 +149,9 @@ function openWindowsColorPicker(): Promise<string | null> {
 
       if (!exec || !nodeFs || !nodePath || !nodeOs) return resolve(null);
 
+      // Base64 encoded minimalist 16x16 .cur file (Eyedropper shape, hotspot at bottom-left 0,15)
+      const cursorB64 = "AAACAAEAEBAAAAAADwBoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAaAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAP8AAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAP8AAAD/AAAA/wAAAP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAP8AAAD/AAAA/wAAAP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+
       const psScript = [
         'Add-Type -AssemblyName System.Windows.Forms',
         'Add-Type -AssemblyName System.Drawing',
@@ -161,8 +164,16 @@ function openWindowsColorPicker(): Promise<string | null> {
         '$form.TopMost = $true',
         '$form.BackColor = [System.Drawing.Color]::White',
         '$form.Opacity = 0.01',
-        '$form.Cursor = [System.Windows.Forms.Cursors]::Cross',
         '$form.ShowInTaskbar = $false',
+        '',
+        'try {',
+        '  $bytes = [System.Convert]::FromBase64String("' + cursorB64 + '")',
+        '  $ms = New-Object System.IO.MemoryStream(,$bytes)',
+        '  $form.Cursor = New-Object System.Windows.Forms.Cursor($ms)',
+        '} catch {',
+        '  $form.Cursor = [System.Windows.Forms.Cursors]::Cross',
+        '}',
+        '',
         '$form.Add_MouseClick({',
         '  param($sender, $e)',
         '  $pos = [System.Windows.Forms.Cursor]::Position',
@@ -197,16 +208,19 @@ function openWindowsColorPicker(): Promise<string | null> {
         
         const out = stdout.trim();
         
+        // Use regex to find the result, in case PowerShell outputs extra warnings
+        const match = out.match(/RESULT:(#[0-9A-Fa-f]{6})/);
+        
         // If explicitly cancelled, return null
-        if (out === 'CANCELLED') return resolve(null);
+        if (out.includes('CANCELLED')) return resolve(null);
         
         // If success, return the hex
-        if (out.startsWith('RESULT:#') && out.length >= 14) {
-          return resolve(out.substring(7, 14));
+        if (match && match[1]) {
+          return resolve(match[1].toUpperCase());
         }
         
         // If it errored, crashed, or was blocked, fallback to standard dialog
-        console.warn("[BrandBase] Eyedropper failed or blocked. Falling back to ColorDialog.");
+        console.warn("[BrandBase] Eyedropper failed or blocked. Falling back to ColorDialog.", out);
         const fallback = await openWindowsFallbackPicker();
         resolve(fallback);
       });
