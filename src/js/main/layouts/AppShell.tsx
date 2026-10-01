@@ -56,19 +56,11 @@ export function AppShell() {
   }, []);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [collapsed, setCollapsed] = useState(window.innerWidth < 800);
+  const [collapsed, setCollapsed] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [showFeatureRequest, setShowFeatureRequest] = useState(false);
   const [hasLibrary, setHasLibrary] = useState(libraryManager.isLoaded());
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setCollapsed(window.innerWidth < 800);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     if (!notice) return undefined;

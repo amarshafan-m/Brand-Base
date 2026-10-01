@@ -74,7 +74,6 @@ const getTheme = (hostName: string): ThemeName => {
     };
     const overrideThemeValue = require("indesign").app.generalPreferences
       .uiBrightnessPreference as number;
-    console.log({ overrideThemeValue });
     const overrideTheme = INDESIGN_THEME_TABLE[overrideThemeValue];
     if (overrideTheme) theme = overrideTheme;
   }
@@ -100,18 +99,14 @@ export const getColorScheme = async () => {
 
   // Overrides
   if (hostName.startsWith("premierepro")) {
-    console.log("Color Override Premiere", { platform, theme });
     colors = getPlatformColors(premiere, platform, theme) ?? colors;
   } else if (hostName.startsWith("indesign")) {
-    console.log("Color Override InDesign", { platform, theme });
     colors = getPlatformColors(indesign, platform, theme) ?? colors;
   } else if (hostName.startsWith("photoshop")) {
-    console.log("Color Override Photoshop", { platform, theme });
     colors = getPlatformColors(photoshop, platform, theme) ?? colors;
   } else {
     console.warn("unknown host");
   }
-  console.log("Final Colors", colors);
   return { theme, colors };
 };
 
@@ -120,7 +115,6 @@ export const updateColorScheme = (val: {
   colors: ColorScheme;
 }) => {
   const { theme, colors } = val;
-  console.log("update color scheme", theme, colors);
   const root = document.querySelector(":root") as HTMLElement;
   for (const key in colors) {
     //@ts-ignore

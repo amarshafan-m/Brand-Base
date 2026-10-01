@@ -35,10 +35,10 @@ export function TopBar({ activePage, onNavigate, onShowNotice, searchQuery, onSe
   };
 
   return (
-    <header className="topbar" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-main)', borderBottom: '1px solid var(--border)', minHeight: '64px' }}>
+    <header className="topbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', background: 'var(--bg-main)', borderBottom: '1px solid var(--border)', minHeight: '64px' }}>
       
-      <div style={{ display: 'flex', alignItems: 'center', flexShrink: 1, minWidth: '140px' }}>
-        <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginRight: '8px', display: window.innerWidth < 600 ? 'none' : 'inline' }}>Active Brand:</span>
+      <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginRight: '12px' }}>Active Brand:</span>
         <Dropdown 
           value={activeBrand?.id || ""} 
           onChange={(newBrandId) => {
@@ -51,15 +51,15 @@ export function TopBar({ activePage, onNavigate, onShowNotice, searchQuery, onSe
               .catch((err) => onShowNotice(err.message));
           }}
           options={brands ? brands.map(b => ({ value: b.id, label: b.name })) : []}
-          placeholder="No Brands"
+          placeholder="No Brands Found"
         />
       </div>
 
-      <div className="global-search" style={{ flex: '1', minWidth: '120px', maxWidth: '400px', display: 'flex', alignItems: 'center', background: 'var(--bg-card)', padding: '6px 12px', borderRadius: '24px', border: '1px solid var(--border)', color: 'var(--text-muted)', position: 'relative' }}>
+      <div className="global-search" style={{ flex: '1', maxWidth: '400px', display: 'flex', alignItems: 'center', background: 'var(--bg-card)', padding: '6px 16px', borderRadius: '24px', border: '1px solid var(--border)', color: 'var(--text-muted)', marginLeft: '24px', position: 'relative' }}>
         <Icon name="search" size={15} />
         <input ref={searchInputRef} 
           type="text" 
-          placeholder="Search..." 
+          placeholder="Search Brand Base..." 
           value={searchQuery}
           onChange={(e) => {
             const v = e.target.value;
@@ -69,7 +69,7 @@ export function TopBar({ activePage, onNavigate, onShowNotice, searchQuery, onSe
             }
           }}
           style={{ 
-            marginLeft: '8px', 
+            marginLeft: '10px', 
             fontSize: '13px', 
             background: 'transparent', 
             border: 'none', 
@@ -81,7 +81,7 @@ export function TopBar({ activePage, onNavigate, onShowNotice, searchQuery, onSe
         {searchQuery && <div role="button" tabIndex={0} aria-label="Clear search" onClick={() => onSearchChange('')} onKeyDown={(e) => { if(e.key === 'Enter' || e.key === ' ') onSearchChange(''); }} style={{ cursor: 'pointer', display: 'flex', position: 'absolute', right: '12px' }}><Icon name="x" size={14} /></div>}
       </div>
 
-      <div style={{ flexShrink: 0 }}>
+      <div style={{ marginLeft: '16px', flexShrink: 0 }}>
         <button 
           aria-label="Request Feature"
           title="Request Feature"
