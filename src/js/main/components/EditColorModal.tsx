@@ -150,6 +150,16 @@ function openWindowsColorPicker(): Promise<string | null> {
       if (!exec || !nodeFs || !nodePath || !nodeOs) return resolve(null);
 
       const psScript = [
+        'Add-Type -TypeDefinition @"',
+        'using System;',
+        'using System.Runtime.InteropServices;',
+        'public class DPI {',
+        '    [DllImport("user32.dll")]',
+        '    public static extern bool SetProcessDPIAware();',
+        '}',
+        '"@',
+        '[DPI]::SetProcessDPIAware() | Out-Null',
+        '',
         'Add-Type -AssemblyName System.Windows.Forms',
         'Add-Type -AssemblyName System.Drawing',
         '$bitmap = New-Object System.Drawing.Bitmap(1, 1)',
@@ -164,6 +174,8 @@ function openWindowsColorPicker(): Promise<string | null> {
         '$form.Cursor = [System.Windows.Forms.Cursors]::Cross',
         '$form.ShowInTaskbar = $false',
         '',
+        '$Global:psResult = ""',
+        '',
         '$form.Add_MouseClick({',
         '  param($sender, $e)',
         '  $pos = [System.Windows.Forms.Cursor]::Position',
@@ -172,22 +184,23 @@ function openWindowsColorPicker(): Promise<string | null> {
         '  try {',
         '    $g.CopyFromScreen($pos.X, $pos.Y, 0, 0, (New-Object System.Drawing.Size(1, 1)))',
         '    $p = $bitmap.GetPixel(0, 0)',
-        '    Write-Output ("RESULT:#{0:X2}{1:X2}{2:X2}" -f $p.R, $p.G, $p.B)',
+        '    $Global:psResult = ("RESULT:#{0:X2}{1:X2}{2:X2}" -f $p.R, $p.G, $p.B)',
         '  } catch {',
-        '    Write-Output "ERROR"',
+        '    $Global:psResult = "ERROR:" + $_.Exception.Message',
         '  }',
         '  $form.Close()',
         '})',
         '$form.Add_KeyDown({',
         '  param($sender, $e)',
         '  if ($e.KeyCode -eq [System.Windows.Forms.Keys]::Escape) {',
-        '    Write-Output "CANCELLED"',
+        '    $Global:psResult = "CANCELLED"',
         '    $form.Close()',
         '  }',
         '})',
         '[System.Windows.Forms.Application]::Run($form)',
         '$g.Dispose()',
-        '$bitmap.Dispose()'
+        '$bitmap.Dispose()',
+        '[Console]::WriteLine($Global:psResult)'
       ].join('\r\n');
 
       const tmpFile = nodePath.join(nodeOs.tmpdir(), `brandbase_eyedropper_${Date.now()}.ps1`);
