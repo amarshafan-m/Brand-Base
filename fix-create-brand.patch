@@ -1,0 +1,11 @@
+--- src/components/CreateBrandModal.tsx
++++ src/components/CreateBrandModal.tsx
+@@ -16,7 +16,7 @@
+ 
+   const handleSubmit = async (e: React.FormEvent) => {
+     e.preventDefault();
+-    if (!name.trim()) {
++    if (!name || !name.trim()) {
+       setError("Brand name is required.");
+       return;
+     }

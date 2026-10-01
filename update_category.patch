@@ -1,0 +1,22 @@
+--- src/pages/LibraryPage.tsx
++++ src/pages/LibraryPage.tsx
+@@ -23,7 +23,19 @@
+   const { data: assets, loading } = useAssets(activeBrandId);
+   const { importFiles, importing, duplicatePrompt, handleDuplicateResolve } = useAssetImport(activeBrandId);
+   
+-  const [selectedCategory, setSelectedCategory] = useState<AssetType | "all">("all");
++  const getCategoryFromPage = (p: string): AssetType | "all" => {
++    if (p === "assets") return "all";
++    if (p === "audio") return "audio";
++    if (p === "graphics") return "graphic";
++    if (p === "mogrts") return "mogrt";
++    if (p === "templates") return "template";
++    if (p === "presets") return "preset";
++    if (p === "packages") return "package";
++    return "all";
++  };
++
++  const selectedCategory = getCategoryFromPage(page);
++  
+   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+   const [integrityScanning, setIntegrityScanning] = useState(false);

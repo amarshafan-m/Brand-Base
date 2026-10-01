@@ -1,0 +1,59 @@
+--- src/components/EditColorModal.tsx
++++ src/components/EditColorModal.tsx
+@@ -4,7 +4,6 @@
+ import { triggerGlobalReload } from "../hooks/useApplicationData";
+ import type { BrandColor, BrandColorType } from "../domain/models";
+-import { ChromePicker } from "react-color";
+ 
+ interface Props {
+   brandId: string;
+@@ -20,6 +19,26 @@
+   const pickerRef = useRef<HTMLDivElement>(null);
+ 
++  // Convert hex to rgb for sliders
++  const getRgb = () => {
++    let h = hex.replace('#', '');
++    if (h.length === 3) h = h.split('').map(c => c + c).join('');
++    if (h.length !== 6) return { r: 0, g: 0, b: 0 };
++    return {
++      r: parseInt(h.substring(0, 2), 16),
++      g: parseInt(h.substring(2, 4), 16),
++      b: parseInt(h.substring(4, 6), 16)
++    };
++  };
++
++  const handleSliderChange = (color: 'r' | 'g' | 'b', val: string) => {
++    const rgb = getRgb();
++    rgb[color] = parseInt(val, 10);
++    const toHex = (n: number) => n.toString(16).padStart(2, '0');
++    setHex(`#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`.toUpperCase());
++  };
++
+   // Close picker when clicking outside
+   useEffect(() => {
+     const handleClickOutside = (e: MouseEvent) => {
+@@ -77,11 +96,22 @@
+             style={{ width: '36px', height: '36px', borderRadius: '4px', border: '1px solid #444', flexShrink: 0, backgroundColor: hex.length >= 4 ? hex : '#000000', cursor: 'pointer' }} 
+           />
+           {showPicker && (
+-            <div ref={pickerRef} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, marginTop: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+-              <ChromePicker 
+-                color={hex.length >= 4 ? hex : '#000000'} 
+-                onChange={(c) => setHex(c.hex)} 
+-                disableAlpha={true}
+-              />
++            <div ref={pickerRef} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, marginTop: '8px', backgroundColor: '#1a1a1a', padding: '16px', border: '1px solid #444', borderRadius: '8px', width: '200px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
++              <div style={{ marginBottom: '12px' }}>
++                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#ff6b6b', marginBottom: '4px' }}><span>Red</span><span>{getRgb().r}</span></div>
++                <input type="range" min="0" max="255" value={getRgb().r} onChange={e => handleSliderChange('r', e.target.value)} style={{ width: '100%' }} />
++              </div>
++              <div style={{ marginBottom: '12px' }}>
++                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#51cf66', marginBottom: '4px' }}><span>Green</span><span>{getRgb().g}</span></div>
++                <input type="range" min="0" max="255" value={getRgb().g} onChange={e => handleSliderChange('g', e.target.value)} style={{ width: '100%' }} />
++              </div>
++              <div style={{ marginBottom: '4px' }}>
++                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#339af0', marginBottom: '4px' }}><span>Blue</span><span>{getRgb().b}</span></div>
++                <input type="range" min="0" max="255" value={getRgb().b} onChange={e => handleSliderChange('b', e.target.value)} style={{ width: '100%' }} />
++              </div>
+             </div>
+           )}

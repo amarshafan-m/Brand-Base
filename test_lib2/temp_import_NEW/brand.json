@@ -1,0 +1,43 @@
+{
+  "version": "1.0",
+  "type": "brand_package",
+  "brand": {
+    "id": "OLD",
+    "name": "Test Brand",
+    "description": "",
+    "settings": {
+      "values": {}
+    }
+  },
+  "assets": [
+    {
+      "id": "a1",
+      "brandId": "OLD",
+      "name": "audio1",
+      "type": "audio",
+      "filePath": "brands/OLD/audio/1.mp3",
+      "tags": [],
+      "status": "approved",
+      "category": "Audio"
+    }
+  ],
+  "colors": [
+    {
+      "id": "c1",
+      "brandId": "OLD",
+      "name": "Red",
+      "hex": "#FF0000",
+      "usage": "primary"
+    }
+  ],
+  "typography": [
+    {
+      "id": "t1",
+      "brandId": "OLD",
+      "name": "Arial",
+      "role": "heading",
+      "fontFamily": "Arial",
+      "fontWeight": "bold"
+    }
+  ]
+}

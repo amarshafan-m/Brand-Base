@@ -1,0 +1,13 @@
+--- src/components/ColorPicker.tsx
++++ src/components/ColorPicker.tsx
+@@ -141,8 +141,9 @@
+         backgroundColor: '#1a1a1a', 
+         border: '1px solid #444', 
+         borderRadius: '8px', 
+         boxShadow: '0 8px 24px rgba(0,0,0,0.8)', 
+-        width: '280px',
++        width: '90%',
++        maxWidth: '280px',
++        boxSizing: 'border-box',
+         zIndex: 200,
+         display: 'flex',

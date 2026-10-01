@@ -1,0 +1,57 @@
+--- src/components/ColorPicker.tsx
++++ src/components/ColorPicker.tsx
+@@ -107,17 +107,17 @@
+       zIndex: 200,
+       display: 'flex',
+       flexDirection: 'column'
+-    }}>
++    }}
++    onMouseDown={(e) => { 
++      setIsDraggingBox(true); 
++      dragStartPos.current = { x: e.clientX - position.x, y: e.clientY - position.y }; 
++    }}
++    >
+       <div 
+-        onMouseDown={(e) => { 
+-          setIsDraggingBox(true); 
+-          dragStartPos.current = { x: e.clientX - position.x, y: e.clientY - position.y }; 
+-        }}
+-        style={{ color: '#fff', fontSize: '13px', marginBottom: '12px', cursor: 'grab', userSelect: 'none', paddingBottom: '8px', borderBottom: '1px solid #333' }}
++        style={{ color: '#fff', fontSize: '13px', marginBottom: '12px', cursor: 'grab', userSelect: 'none', paddingBottom: '8px', borderBottom: '1px solid #333', pointerEvents: 'none' }}
+       >
+         Pick a colour
+       </div>
+       
+       {/* Saturation / Value Area */}
+       <div 
+         ref={satValRef}
+-        onMouseDown={(e) => { setIsDraggingSV(true); updateSV(e); }}
++        onMouseDown={(e) => { e.stopPropagation(); setIsDraggingSV(true); updateSV(e); }}
+         style={{ 
+           width: '100%', height: '180px', position: 'relative', cursor: 'crosshair', borderRadius: '4px',
+           backgroundColor: hueColor,
+@@ -140,7 +140,7 @@
+       <div style={{ display: 'flex', alignItems: 'center', marginTop: '16px' }}>
+         <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '1px solid #444', backgroundColor: currentColor, marginRight: '12px', flexShrink: 0 }} />
+         <div 
+           ref={hueRef}
+-          onMouseDown={(e) => { setIsDraggingHue(true); updateHue(e); }}
++          onMouseDown={(e) => { e.stopPropagation(); setIsDraggingHue(true); updateHue(e); }}
+           style={{ 
+             flex: 1, height: '12px', position: 'relative', cursor: 'ew-resize', borderRadius: '6px',
+             background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'
+@@ -158,18 +158,18 @@
+       {/* Inputs */}
+-      <div style={{ display: 'flex', marginTop: '16px', gap: '8px' }}>
++      <div style={{ display: 'flex', marginTop: '16px', gap: '8px' }} onMouseDown={e => e.stopPropagation()}>
+         <div style={{ flex: 1.5 }}>
+           <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '4px' }}>Hex</div>
+           <input type="text" value={currentColor.replace('#', '').toLowerCase()} readOnly style={{ width: '100%', padding: '6px', backgroundColor: '#232323', border: '1px solid #444', borderRadius: '4px', fontSize: '12px', color: '#fff', boxSizing: 'border-box' }} />
+         </div>
+@@ -176,6 +176,6 @@
+       {/* Action Buttons */}
+-      <div style={{ display: 'flex', marginTop: '24px', gap: '8px' }}>
++      <div style={{ display: 'flex', marginTop: '24px', gap: '8px' }} onMouseDown={e => e.stopPropagation()}>
+         <Button variant="primary" onClick={() => onSelect(currentColor)} type="button">Select</Button>
+         <Button variant="secondary" onClick={onCancel} type="button">Cancel</Button>
+       </div>

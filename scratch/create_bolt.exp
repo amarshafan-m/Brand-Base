@@ -1,0 +1,14 @@
+#!/usr/bin/expect -f
+set timeout -1
+spawn npx -y create-bolt@latest
+expect "Project Name:"
+send "Brand Base CEP\r"
+expect "Project Folder Name:"
+send "brand-base-cep\r"
+expect "Project Platform:"
+send "\033\[B\r" ;# Down arrow for CEP? Wait, let's just use regular expressions or sleep
+sleep 1
+send "\r"
+expect "Framework:"
+send "\r" ;# React
+expect eof

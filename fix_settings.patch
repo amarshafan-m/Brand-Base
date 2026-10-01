@@ -1,0 +1,32 @@
+--- src/pages/SettingsPage.tsx
++++ src/pages/SettingsPage.tsx
+@@ -40,7 +40,7 @@
+       <section className="settings-content" style={{ display: 'flex', flexDirection: 'column',  maxWidth: '800px' }}>
+         
+-        <div className="settings-group">
++        <div className="settings-group" style={{ display: 'flex', flexDirection: 'column', marginBottom: '32px' }}>
+           <h3 style={{ fontSize: '14px', marginBottom: '12px', color: '#f3f4f6', fontWeight: 600 }}>General</h3>
+-          <div className="settings-card" style={{ background: '#14161a', border: '1px solid #262a33', borderRadius: '8px', overflow: 'hidden' }}>
++          <div className="settings-card" style={{ display: 'flex', flexDirection: 'column', background: '#14161a', border: '1px solid #262a33', borderRadius: '8px', overflow: 'hidden' }}>
+             <SettingRow control={<span className="setting-value" style={{ color: '#9ca3af', fontSize: '13px' }}>Not set</span>} detail="The brand used by default in new views.">Default Brand</SettingRow>
+             <SettingRow control={<div tabIndex={0} aria-checked="true" className="toggle" role="switch"><span /></div>} detail="Ask before removing records in a future library.">Confirm Before Delete</SettingRow>
+@@ -48,7 +48,7 @@
+         </div>
+ 
+-        <div className="settings-group">
++        <div className="settings-group" style={{ display: 'flex', flexDirection: 'column', marginBottom: '32px' }}>
+           <h3 style={{ fontSize: '14px', marginBottom: '12px', color: '#f3f4f6', fontWeight: 600 }}>Appearance</h3>
+-          <div className="settings-card" style={{ background: '#14161a', border: '1px solid #262a33', borderRadius: '8px', overflow: 'hidden' }}>
++          <div className="settings-card" style={{ display: 'flex', flexDirection: 'column', background: '#14161a', border: '1px solid #262a33', borderRadius: '8px', overflow: 'hidden' }}>
+             <SettingRow control={<span className="setting-value" style={{ color: '#9ca3af', fontSize: '13px' }}>Dark</span>} detail="Brand Base follows Premiere's professional dark visual language.">Theme</SettingRow>
+             <SettingRow control={<div tabIndex={0} aria-checked="false" className="toggle" role="switch"><span /></div>} detail="Reduce spacing in asset views when enabled.">Compact Mode</SettingRow>
+@@ -56,7 +56,7 @@
+         </div>
+ 
+-        <div className="settings-group">
++        <div className="settings-group" style={{ display: 'flex', flexDirection: 'column', marginBottom: '32px' }}>
+           <h3 style={{ fontSize: '14px', marginBottom: '12px', color: '#f3f4f6', fontWeight: 600 }}>Library</h3>
+-          <div className="settings-card" style={{ background: '#14161a', border: '1px solid #262a33', borderRadius: '8px', overflow: 'hidden' }}>
++          <div className="settings-card" style={{ display: 'flex', flexDirection: 'column', background: '#14161a', border: '1px solid #262a33', borderRadius: '8px', overflow: 'hidden' }}>
+             <SettingRow control={<span className="setting-value" style={{ color: '#9ca3af', fontSize: '13px' }}>{libraryPath}</span>} detail="A local folder selected explicitly by you.">Library Location</SettingRow>
+             <div style={{ display: 'flex', gap: '8px', padding: '16px' }}>

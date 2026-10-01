@@ -1,0 +1,78 @@
+--- src/components/EditColorModal.tsx
++++ src/components/EditColorModal.tsx
+@@ -20,24 +20,13 @@
+   const pickerRef = useRef<HTMLDivElement>(null);
+ 
+-  // Convert hex to rgb for sliders
+-  const getRgb = () => {
+-    let h = hex.replace('#', '');
+-    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+-    if (h.length !== 6) return { r: 0, g: 0, b: 0 };
+-    return {
+-      r: parseInt(h.substring(0, 2), 16),
+-      g: parseInt(h.substring(2, 4), 16),
+-      b: parseInt(h.substring(4, 6), 16)
+-    };
+-  };
+-
+-  const handleSliderChange = (color: 'r' | 'g' | 'b', val: string) => {
+-    const rgb = getRgb();
+-    rgb[color] = parseInt(val, 10);
+-    const toHex = (n: number) => n.toString(16).padStart(2, '0');
+-    setHex(`#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`.toUpperCase());
++  // Convert click coordinates on the spectrum to a hex color
++  const handleSpectrumClick = (e: React.MouseEvent<HTMLImageElement>) => {
++    const rect = e.currentTarget.getBoundingClientRect();
++    const x = e.clientX - rect.left;
++    const y = e.clientY - rect.top;
++    const hue = (x / rect.width) * 360;
++    const sat = 1 - (y / rect.height);
++    
++    // HSL to HEX approximation for a simple picker
++    const h = hue;
++    const s = sat * 100;
++    const l = 50; // Keep lightness at 50% for pure colors
++    
++    const c = (1 - Math.abs(2 * l / 100 - 1)) * (s / 100);
++    const xVal = c * (1 - Math.abs((h / 60) % 2 - 1));
++    const m = l / 100 - c / 2;
++    
++    let r = 0, g = 0, b = 0;
++    if (h >= 0 && h < 60) { r = c; g = xVal; b = 0; }
++    else if (h >= 60 && h < 120) { r = xVal; g = c; b = 0; }
++    else if (h >= 120 && h < 180) { r = 0; g = c; b = xVal; }
++    else if (h >= 180 && h < 240) { r = 0; g = xVal; b = c; }
++    else if (h >= 240 && h < 300) { r = xVal; g = 0; b = c; }
++    else if (h >= 300 && h < 360) { r = c; g = 0; b = xVal; }
++    
++    const toHex = (n: number) => Math.round(n * 255).toString(16).padStart(2, '0');
++    setHex(`#${toHex(r + m)}${toHex(g + m)}${toHex(b + m)}`.toUpperCase());
+   };
+ 
+@@ -70,19 +59,10 @@
+             style={{ width: '36px', height: '36px', borderRadius: '4px', border: '1px solid #444', flexShrink: 0, backgroundColor: hex.length >= 4 ? hex : '#000000', cursor: 'pointer' }} 
+           />
+           {showPicker && (
+-            <div ref={pickerRef} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, marginTop: '8px', backgroundColor: '#1a1a1a', padding: '16px', border: '1px solid #444', borderRadius: '8px', width: '200px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+-              <div style={{ marginBottom: '12px' }}>
+-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#ff6b6b', marginBottom: '4px' }}><span>Red</span><span>{getRgb().r}</span></div>
+-                <input type="range" min="0" max="255" value={getRgb().r} onChange={e => handleSliderChange('r', e.target.value)} style={{ width: '100%' }} />
+-              </div>
+-              <div style={{ marginBottom: '12px' }}>
+-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#51cf66', marginBottom: '4px' }}><span>Green</span><span>{getRgb().g}</span></div>
+-                <input type="range" min="0" max="255" value={getRgb().g} onChange={e => handleSliderChange('g', e.target.value)} style={{ width: '100%' }} />
+-              </div>
+-              <div style={{ marginBottom: '4px' }}>
+-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#339af0', marginBottom: '4px' }}><span>Blue</span><span>{getRgb().b}</span></div>
+-                <input type="range" min="0" max="255" value={getRgb().b} onChange={e => handleSliderChange('b', e.target.value)} style={{ width: '100%' }} />
+-              </div>
++            <div ref={pickerRef} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, marginTop: '8px', backgroundColor: '#222', padding: '12px', border: '1px solid #555', borderRadius: '8px', width: '200px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
++              <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '8px', textAlign: 'center' }}>Click anywhere to pick</div>
++              <img 
++                onClick={handleSpectrumClick}
++                src="data:image/png;base64,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U7sA0e7xY23PXV27b6O8tW35fR39v1W31V9tO/b1O3+z7/e2vS99ZfU6235b24472g5/pe2E29ta/uYx/0yT2e3z2o5e0/bCPe0vfaB37F8c/t/855+p/3VlT+2vG3uqX5/R23b49u0n3H1v929sX59qH7v+8mBv9Xvj+g7vOXTvO360++A9331n/rO3f23yweO27/v1Ldcf8M8f//jH5e2Q6Qv9B2T9tWJb12u6v72te39N24Jra5sPrW2/bUPtvn9r27P/WtvWb2j755W1a59q+/pVtWsOqD10cu3bV7XtuF37dtnH2gXfa1sT1Xbp4rZX1bZtHmt7XGvb6F/WLnt27bs9tbWb1rbhK0+4a287cE/to7r2yB+s7etfa7tp7bpvbHv39775n27b/8W2829pe+b9bR/8s23H7rN/sXbO3LaT7137f8/R+v5P925qj99/u3/X7R0f3XXuC9v63tjWv09L/237e1z73W1D7z/S7963/9tP8r1tS/dty++j+T1q+/9w27P/Y9+L2pbu25YvtnXPttU3Wvs22nL77673H2v/h9ta/9/a1v03tA2/3/Y/2fbaN26b0+P/f337gP75Y8eOjXoXg325N320p/eNbf29W2qPbO9a11a/xNbvtnbtjrb1W20rb2lbO/s/1r/c2nZk2+q7bdu2j8/v2/aY9re2+m/3d+tvbe/t763/3vb+Wlt+p+39/9r6n7Xv/a2tv6Vt7Q+21VfXn/9T2/x72579b2x79h9ve/Zfs+3Z/4+2Z//ntj37v9f27L9+W37vtiPf23bke233j97Qtt9u/c/79391W//ftqf//2rL/9zWb9t/6+61/33d+7+2fQG2V3/o6/T0dK/jLwbHjx9vc1v4uW1V62+35c/XfHtvq9uW31bbgN2/bV1T2/rbttU32vpnt5Wvtn51zbfXtf5dbeNvbCuvtfU3Wvu91ta/Rtt7e1ttd2tt89Xad69ttW33a9uq17VVd2r7d2lt+a1t6/+ntn9+tv27Q23Xbq3tuqS2C0L135Vtn/9T29Efa2u/p22d/r/t/T9te/9/2vZ/q+27x77f2zZ+r+0974/Wvt/71m/7X2zr/3tbf9P+v6D932u7n+v73/t7bf36f9O+h9s2o/1/2/p31y+W/y9t/b/f1t9o+2/c2vpvtc3vtW3699r6T7b1/3Vb/9/2/h937b8Xtm32e2/9W/tvaBv/X9v6f1v7YF2Xf/iI26m3tP9a2/Yd68eOHRvjF4Oxmzdvbjb/ztrWq4Vf7L01799R+0bb/Kza791v07817926bU1t68y6tn63tUe2tW1Z+aht8Vv7+lXlq7W9t7f+q629trc/1tYvt/fL2rb6lrat7rXt/Ztqn1/RtuN2tW367rZ9/a62Y/9r27P/0tr+ed32z0+0/bOzbcd/t31b7rZt72rb/5/a9nt7235vb/v9w7b93rXt94vbXnCibf8vb3v+n7f985JtZ2xpu2Zb2zV/1nbNrW3X3Nq2v/u9tv3d721P//dr+/u32vZ3b7Y9/fva9vRvavvnpbb/wW274A1tFxzctm1b292723bb3ba3s22vR9te1LZn/o9te+avtvWvbxt+Y9uG39i24Z9u2/BPt234u9s2/PhtG35D2/Cbtg1/Y9uG72kbvlPbhL/R/t532yb89W2rf23b6n/fVv/GtlWvb2v727ZVP9K26kXtt7WtelHbgv9h22v/tG2v/b/aXvu/2vbaN7a99n9v2/B/bBv+X9uGv6Ft+H/bfm/Xht/YNuGbtE3/h9qmf7xt+h+0Tf8n2qb/k23T/6k6R2/X5uPq396ufb7a1vd3ta0+pG31v22rL22rD20bf0PbhL+5bcI3aRP+9rYJ36xt+B+3Df/jbRv+nba99n/X9tp/rm2vvb9tr/3ftL32X6jP6VvaXnvf2vbaN7e99te1vfb/0vba72577Z/Y9tr/Ydtu19G29mrb8Bvb1r+nbT36/7Qe/Vtb/4e2q3+i/f1Pte/zP23/s32ftn2f/5X2ff5n2/d5U1vvvKftve9oe++rtL33nW3vLd323j+0vfc/tf93v6f+v+09jDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY4wxxhhjjDHGGGOMMcYYY4wxxhhjjDHD1v4Pt/NTVqjYmZkAAAAASUVORK5CYII=" 
++                style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px', cursor: 'crosshair', pointerEvents: 'auto' }}
++              />
+             </div>
+           )}
+         </div>

@@ -1,0 +1,67 @@
+--- src/components/BrandDetailPanel.tsx
++++ src/components/BrandDetailPanel.tsx
+@@ -48,46 +48,46 @@
+ 
+   return (
+     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+-      <div style={{ padding: '20px', borderBottom: '1px solid var(--uxp-host-border-color, #444)', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+-        <Button onClick={onBack} variant="secondary">Back</Button>
++      <div style={{ padding: '20px', borderBottom: '1px solid var(--uxp-host-border-color, #444)', display: 'flex', alignItems: 'flex-start' }}>
++        <div style={{ marginRight: '16px' }}><Button onClick={onBack} variant="secondary">Back</Button></div>
+         <div style={{ flex: 1 }}>
+-          <h2 style={{ margin: '0 0 8px 0' }}>{brand.name} {brand.isDefault && <Badge>Active</Badge>}</h2>
++          <h2 style={{ margin: '0 0 8px 0', display: 'flex', alignItems: 'center' }}>{brand.name} {brand.isDefault && <div style={{ marginLeft: '12px' }}><Badge>Active</Badge></div>}</h2>
+           {brand.description && <p style={{ margin: 0, color: 'var(--uxp-host-text-color-secondary, #aaa)' }}>{brand.description}</p>}
+         </div>
+-        <div style={{ display: 'flex', gap: '8px' }}>
+-          {!brand.isDefault && <Button variant="secondary" onClick={() => handleSetDefault(brand.id)}>Set Active</Button>}
+-          <Button variant="secondary" onClick={() => setShowEditModal(true)}>Edit</Button>
++        <div style={{ display: 'flex' }}>
++          {!brand.isDefault && <div style={{ marginRight: '8px' }}><Button variant="secondary" onClick={() => handleSetDefault(brand.id)}>Set Active</Button></div>}
++          <div style={{ marginRight: '8px' }}><Button variant="secondary" onClick={() => setShowEditModal(true)}>Edit</Button></div>
+           <Button variant="secondary" onClick={() => handleArchive(brand.id)}>Archive</Button>
+         </div>
+       </div>
+ 
+-      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '32px', overflowY: 'auto' }}>
+-        <section>
++      <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
++        <section style={{ marginBottom: '32px' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+             <h3 style={{ margin: 0 }}>Colors ({colors.length})</h3>
+             <Button variant="secondary" onClick={() => setShowColorModal(true)}>Add Color</Button>
+           </div>
+-          {colors.length === 0 ? <p style={{ color: '#888' }}>No colors added yet.</p> : (
+-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
++          {colors.length === 0 ? <p style={{ color: '#888', margin: 0 }}>No colors added yet.</p> : (
++            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+               {colors.map(c => (
+-                <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', border: '1px solid #444', borderRadius: '4px' }}>
+-                  <div style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: c.value }} />
++                <div key={c.id} style={{ display: 'flex', alignItems: 'center', padding: '8px 12px', border: '1px solid #444', borderRadius: '4px', marginRight: '12px', marginBottom: '12px' }}>
++                  <div style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: c.value, marginRight: '8px' }} />
+                   <div>
+                     <div style={{ fontSize: '13px', fontWeight: 600 }}>{c.name}</div>
+                     <div style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase' }}>{c.value}</div>
+                   </div>
+                 </div>
+               ))}
+             </div>
+           )}
+         </section>
+ 
+-        <section>
++        <section style={{ marginBottom: '32px' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+             <h3 style={{ margin: 0 }}>Typography ({typography.length})</h3>
+             <Button variant="secondary" onClick={() => setShowTypographyModal(true)}>Add Style</Button>
+           </div>
+-          {typography.length === 0 ? <p style={{ color: '#888' }}>No typography added yet.</p> : (
+-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
++          {typography.length === 0 ? <p style={{ color: '#888', margin: 0 }}>No typography added yet.</p> : (
++            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+               {typography.map(t => (
+-                <div key={t.id} style={{ padding: '12px', border: '1px solid #444', borderRadius: '4px', minWidth: '150px', display: 'flex', justifyContent: 'space-between' }}>
++                <div key={t.id} style={{ padding: '12px', border: '1px solid #444', borderRadius: '4px', minWidth: '150px', display: 'flex', justifyContent: 'space-between', marginRight: '12px', marginBottom: '12px' }}>
+                   <div>
+                     <div style={{ fontSize: '14px', fontWeight: 600 }}>{t.name}</div>

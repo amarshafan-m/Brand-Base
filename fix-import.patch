@@ -1,0 +1,19 @@
+--- src/hooks/useAssetImport.ts
++++ src/hooks/useAssetImport.ts
+@@ -29,7 +29,14 @@
+ 
+     try {
+       const fs = uxp.storage.localFileSystem;
+-      const files = await fs.getFileForOpening({ allowMultiple: true });
++      
++      const extensions = [
++        "png", "jpg", "jpeg", "svg", "gif", "psd", "ai", "eps", "pdf",
++        "mp4", "mov", "avi", "webm", "m4v", 
++        "mp3", "wav", "aac", "m4a", "aif", "aiff",
++        "mogrt", "prproj", "txt", "ttf", "otf"
++      ];
++      
++      const files = await fs.getFileForOpening({ allowMultiple: true, types: extensions });
+       if (!files) return;
+       
+       let fileArray: any[] = [];

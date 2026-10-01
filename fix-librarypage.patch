@@ -1,0 +1,13 @@
+--- src/pages/LibraryPage.tsx
++++ src/pages/LibraryPage.tsx
+@@ -73,10 +73,6 @@
+       <div style={{ flex: 1, overflowY: 'auto' }}>
+         {loading ? (
+           <div style={{ padding: '20px', color: 'var(--text-muted)' }}>Loading library...</div>
+-        ) : page === "colors" ? (
+-          <EmptyState title="Brand Colors" description="Color management is accessed by editing your Brand in the Brands view. Dedicated color page coming soon." icon="palette" />
+-        ) : page === "typography" ? (
+-          <EmptyState title="Typography" description="Typography is accessed by editing your Brand in the Brands view. Dedicated typography page coming soon." icon="type" />
+         ) : filteredAssets.length === 0 ? (
+           <EmptyState title="No assets found" description="No assets found in this category." icon="assets" />
+         ) : (

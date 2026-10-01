@@ -1,0 +1,84 @@
+--- src/components/EditColorModal.tsx
++++ src/components/EditColorModal.tsx
+@@ -62,28 +62,31 @@
+         <h2 style={{ margin: '0 0 16px 0', fontSize: '18px' }}>{color ? "Edit Color" : "Add Color"}</h2>
+         {error && <div style={{ color: '#ff6b6b', fontSize: '13px', marginBottom: '16px' }}>{error}</div>}
+         
+-        <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '13px', marginBottom: '16px', width: '100%' }}>
+-          <span style={{ marginBottom: '4px' }}>Name</span>
+-          <input type="text" value={name} onChange={e => setName(e.target.value)} required style={{ padding: '8px', backgroundColor: '#1a1a1a', border: '1px solid #444', color: '#fff', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }} placeholder="e.g. Primary Blue" />
+-        </label>
++        {/* Hide native inputs when picker is open to prevent UXP z-index bleed-through */}
++        <div style={{ visibility: showPicker ? 'hidden' : 'visible' }}>
++          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '13px', marginBottom: '16px', width: '100%' }}>
++            <span style={{ marginBottom: '4px' }}>Name</span>
++            <input type="text" value={name} onChange={e => setName(e.target.value)} required style={{ padding: '8px', backgroundColor: '#1a1a1a', border: '1px solid #444', color: '#fff', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }} placeholder="e.g. Primary Blue" />
++          </label>
+         
+-        <div style={{ display: 'flex', marginBottom: '16px', alignItems: 'flex-end', width: '100%', position: 'relative' }}>
+-          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '13px', flex: 1, marginRight: '8px' }}>
+-            <span style={{ marginBottom: '4px' }}>HEX Value</span>
+-            <input type="text" value={hex} onChange={e => handleHexChange(e.target.value)} required style={{ padding: '8px', backgroundColor: '#1a1a1a', border: '1px solid #444', color: '#fff', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }} placeholder="#FFFFFF" />
++          <div style={{ display: 'flex', marginBottom: '16px', alignItems: 'flex-end', width: '100%', position: 'relative' }}>
++            <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '13px', flex: 1, marginRight: '8px' }}>
++              <span style={{ marginBottom: '4px' }}>HEX Value</span>
++              <input type="text" value={hex} onChange={e => handleHexChange(e.target.value)} required style={{ padding: '8px', backgroundColor: '#1a1a1a', border: '1px solid #444', color: '#fff', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }} placeholder="#FFFFFF" />
++            </label>
++            <div 
++              onClick={() => setShowPicker(!showPicker)}
++              style={{ width: '36px', height: '36px', borderRadius: '4px', border: '1px solid #444', flexShrink: 0, backgroundColor: hex.length >= 4 ? hex : '#000000', cursor: 'pointer' }} 
++            />
++          </div>
++          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '13px', marginBottom: '24px', width: '100%' }}>
++            <span style={{ marginBottom: '4px' }}>Usage</span>
++            <select value={usage} onChange={e => setUsage(e.target.value as BrandColorType)} style={{ padding: '8px', backgroundColor: '#1a1a1a', border: '1px solid #444', color: '#fff', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }}>
++              <option value="primary">Primary</option>
++              <option value="secondary">Secondary</option>
++              <option value="accent">Accent</option>
++              <option value="background">Background</option>
++              <option value="text">Text</option>
++              <option value="custom">Custom</option>
++            </select>
+           </label>
+-          <div 
+-            onClick={() => setShowPicker(!showPicker)}
+-            style={{ width: '36px', height: '36px', borderRadius: '4px', border: '1px solid #444', flexShrink: 0, backgroundColor: hex.length >= 4 ? hex : '#000000', cursor: 'pointer' }} 
+-          />
+-          {showPicker && (
+-            <ColorPicker 
+-              initialColor={hex.length >= 4 ? hex : '#000000'} 
+-              onSelect={(c) => { setHex(c); setShowPicker(false); }} 
+-              onCancel={() => setShowPicker(false)}
+-            />
+-          )}
+         </div>
+-        <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '13px', marginBottom: '24px', width: '100%' }}>
+-          <span style={{ marginBottom: '4px' }}>Usage</span>
+-          <select value={usage} onChange={e => setUsage(e.target.value as BrandColorType)} style={{ padding: '8px', backgroundColor: '#1a1a1a', border: '1px solid #444', color: '#fff', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }}>
+-            <option value="primary">Primary</option>
+-            <option value="secondary">Secondary</option>
+-            <option value="accent">Accent</option>
+-            <option value="background">Background</option>
+-            <option value="text">Text</option>
+-            <option value="custom">Custom</option>
+-          </select>
+-        </label>
+ 
+-        <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+-          <div style={{ marginRight: '8px' }}><Button variant="secondary" onClick={onClose} type="button">Cancel</Button></div>
+-          <Button variant="primary" onClick={handleSubmit} type="button">Save</Button>
+-        </div>
++        {showPicker ? (
++          <ColorPicker 
++            initialColor={hex.length >= 4 ? hex : '#000000'} 
++            onSelect={(c) => { setHex(c); setShowPicker(false); }} 
++            onCancel={() => setShowPicker(false)}
++          />
++        ) : (
++          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
++            <div style={{ marginRight: '8px' }}><Button variant="secondary" onClick={onClose} type="button">Cancel</Button></div>
++            <Button variant="primary" onClick={handleSubmit} type="button">Save</Button>
++          </div>
++        )}
+       </form>
+     </div>

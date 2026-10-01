@@ -1,0 +1,22 @@
+--- src/layouts/AppShell.tsx
++++ src/layouts/AppShell.tsx
+@@ -5,6 +5,8 @@
+ import { LibraryPage } from "../pages/LibraryPage";
+ import { SettingsPage } from "../pages/SettingsPage";
+ import { BrandsPage } from "../pages/BrandsPage";
++import { ColorsPage } from "../pages/ColorsPage";
++import { TypographyPage } from "../pages/TypographyPage";
+ import type { PageId } from "../types/navigation";
+ import { Sidebar } from "./Sidebar";
+ import { TopBar } from "./TopBar";
+@@ -43,7 +45,9 @@
+           {activePage === "home" ? <HomePage onNavigate={setActivePage} onShowNotice={setNotice} /> : null}
+           {activePage === "settings" ? <SettingsPage onShowNotice={setNotice} /> : null}
+           {activePage === "brands" ? <BrandsPage onNavigate={setActivePage} onShowNotice={setNotice} /> : null}
+-          {isContentPage(activePage) ? <LibraryPage onNavigate={setActivePage} onShowNotice={setNotice} page={activePage} /> : null}
++          {activePage === "colors" ? <ColorsPage onShowNotice={setNotice} /> : null}
++          {activePage === "typography" ? <TypographyPage onShowNotice={setNotice} /> : null}
++          {isContentPage(activePage) && activePage !== "colors" && activePage !== "typography" ? <LibraryPage onNavigate={setActivePage} onShowNotice={setNotice} page={activePage} /> : null}
+         </main>
+       </div>
+       {notice ? <Toast message={notice} onDismiss={() => setNotice(null)} /> : null}

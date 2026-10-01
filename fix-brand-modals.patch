@@ -1,0 +1,45 @@
+--- src/components/EditBrandModal.tsx
++++ src/components/EditBrandModal.tsx
+@@ -41,16 +41,16 @@
+         backgroundColor: 'var(--uxp-host-background-color, #232323)',
+         padding: '24px', borderRadius: '8px', width: '400px',
+         border: '1px solid var(--uxp-host-border-color, #444)',
+         boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+-        display: 'flex', flexDirection: 'column', gap: '16px'
++        display: 'flex', flexDirection: 'column'
+       }}>
+-        <h2 style={{ margin: 0, fontSize: '18px' }}>Edit Brand</h2>
++        <h2 style={{ margin: '0 0 16px 0', fontSize: '18px' }}>Edit Brand</h2>
+         
+-        {error && <div style={{ color: '#ff6b6b', fontSize: '13px' }}>{error}</div>}
++        {error && <div style={{ color: '#ff6b6b', fontSize: '13px', marginBottom: '16px' }}>{error}</div>}
+         
+-        <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '13px' }}>
+-          Brand Name *
++        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '13px', marginBottom: '16px' }}>
++          <span style={{ marginBottom: '4px' }}>Brand Name *</span>
+           <input 
+             type="text" 
+             value={name} 
+@@ -66,9 +66,9 @@
+           />
+         </label>
+ 
+-        <label style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '13px' }}>
+-          Description (Optional)
++        <label style={{ display: 'flex', flexDirection: 'column', fontSize: '13px', marginBottom: '24px' }}>
++          <span style={{ marginBottom: '4px' }}>Description (Optional)</span>
+           <textarea 
+             value={description} 
+             onChange={(e) => setDescription(e.target.value)} 
+@@ -83,9 +83,9 @@
+           />
+         </label>
+ 
+-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
+-          <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
++        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
++          <div style={{ marginRight: '12px' }}><Button variant="secondary" onClick={onClose} disabled={isSubmitting}>Cancel</Button></div>
+           <Button variant="primary" onClick={handleSubmit} disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Save Changes"}</Button>
+         </div>
+       </form>

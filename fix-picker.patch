@@ -1,0 +1,43 @@
+--- src/components/EditColorModal.tsx
++++ src/components/EditColorModal.tsx
+@@ -4,7 +4,6 @@
+ import { triggerGlobalReload } from "../hooks/useApplicationData";
+ import type { BrandColor, BrandColorType } from "../domain/models";
+-import { HexColorPicker } from "react-colorful";
+ 
+ interface Props {
+   brandId: string;
+@@ -19,6 +18,19 @@
+   const [showPicker, setShowPicker] = useState(false);
+   const pickerRef = useRef<HTMLDivElement>(null);
+ 
++  const PRESET_COLORS = [
++    "#000000", "#FFFFFF", "#F3F4F6", "#9CA3AF", "#4B5563",
++    "#1F2937", "#EF4444", "#F97316", "#F59E0B", "#EAB308",
++    "#84CC16", "#22C55E", "#10B981", "#14B8A6", "#06B6D4",
++    "#0EA5E9", "#3B82F6", "#6366F1", "#8B5CF6", "#A855F7",
++    "#D946EF", "#EC4899", "#F43F5E"
++  ];
++
+   // Close picker when clicking outside
+   useEffect(() => {
+     const handleClickOutside = (e: MouseEvent) => {
+@@ -58,8 +70,14 @@
+           <div 
+             onClick={() => setShowPicker(!showPicker)}
+             style={{ width: '36px', height: '36px', borderRadius: '4px', border: '1px solid #444', flexShrink: 0, backgroundColor: hex.length >= 4 ? hex : '#000000', cursor: 'pointer' }} 
+           />
+           {showPicker && (
+-            <div ref={pickerRef} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, marginTop: '8px' }}>
+-              <HexColorPicker color={hex.length >= 4 ? hex : '#000000'} onChange={setHex} />
++            <div ref={pickerRef} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, marginTop: '8px', backgroundColor: '#1a1a1a', padding: '12px', border: '1px solid #444', borderRadius: '8px', width: '220px', display: 'flex', flexWrap: 'wrap', gap: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
++              <div style={{ width: '100%', marginBottom: '4px', fontSize: '11px', color: '#9ca3af', textTransform: 'uppercase', fontWeight: 600 }}>Presets</div>
++              {PRESET_COLORS.map(c => (
++                <div 
++                  key={c} 
++                  onClick={() => { setHex(c); setShowPicker(false); }}
++                  style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: c, cursor: 'pointer', border: c.toUpperCase() === '#FFFFFF' ? '1px solid #ccc' : '1px solid rgba(0,0,0,0.2)' }}
++                />
++              ))}
+             </div>
+           )}
