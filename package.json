@@ -1,8 +1,8 @@
 {
   "name": "com.brandbase.premiere.cep",
   "private": true,
-  "version": "1.0.0",
-  "author": "Amarshafan M",
+  "version": "1.0.1",
+  "author": "Aryanandha",
   "type": "module",
   "scripts": {
     "dev": "vite",

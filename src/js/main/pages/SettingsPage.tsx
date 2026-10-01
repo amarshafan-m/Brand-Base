@@ -192,7 +192,7 @@ export function SettingsPage({ onShowNotice }: { onShowNotice: (notice: string) 
         <div className="settings-group" style={{ display: 'flex', flexDirection: 'column', marginBottom: '32px', flexShrink: 0 }}>
           <h3 style={{ fontSize: '14px', marginBottom: '12px', color: 'var(--text-main)', fontWeight: 600 }}>About</h3>
           <div className="settings-card" style={{ display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', overflow: 'visible', flexShrink: 0 }}>
-            <SettingRow control={<span className="setting-value" style={{ color: 'var(--text-main)', fontSize: '13px', fontWeight: 600 }}>v1.0.0</span>} detail="Currently installed build.">Version</SettingRow>
+            <SettingRow control={<span className="setting-value" style={{ color: 'var(--text-main)', fontSize: '13px', fontWeight: 600 }}>v1.0.1</span>} detail="Currently installed build.">Version</SettingRow>
             <SettingRow 
               control={
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -215,7 +215,7 @@ export function SettingsPage({ onShowNotice }: { onShowNotice: (notice: string) 
                 </div>
               } 
               detail="Connect with the developer.">
-              Developer: Amarshafan M
+              Developer: Aryanandha
             </SettingRow>
           </div>
         </div>
