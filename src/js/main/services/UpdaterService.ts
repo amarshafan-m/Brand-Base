@@ -6,6 +6,7 @@ const fs = typeof window !== 'undefined' && window.require ? window.require('fs'
 const path = typeof window !== 'undefined' && window.require ? window.require('path') : null;
 const os = typeof window !== 'undefined' && window.require ? window.require('os') : null;
 const AdmZip = typeof window !== 'undefined' && window.require ? window.require('adm-zip') : null;
+const child_process = typeof window !== 'undefined' && window.require ? window.require('child_process') : null;
 
 export interface UpdateInfo {
   hasUpdate: boolean;
@@ -62,7 +63,7 @@ export class UpdaterService {
   }
 
   public async installUpdate(downloadUrl: string, onProgress?: (msg: string) => void): Promise<void> {
-    if (!https || !fs || !path || !os || !AdmZip) throw new Error("Node environment not fully available for OTA.");
+    if (!https || !fs || !path || !os || !AdmZip || !child_process) throw new Error("Node environment not fully available for OTA.");
     
     return new Promise((resolve, reject) => {
       const tmpFile = path.join(os.tmpdir(), `brandbase-update-${Date.now()}.zip`);
@@ -71,7 +72,6 @@ export class UpdaterService {
       
       const file = fs.createWriteStream(tmpFile);
       
-      // We need to handle redirects (302) which GitHub uses for asset downloads
       const download = (url: string) => {
         https.get(url, (res: any) => {
           if (res.statusCode === 301 || res.statusCode === 302) {
@@ -85,30 +85,65 @@ export class UpdaterService {
             if (onProgress) onProgress("Extracting update...");
             
             try {
-              // Get the extension's root directory
               const extensionPath = csi.getSystemPath("extension");
-              
               const zip = new AdmZip(tmpFile);
-              // Extract and overwrite everything
-              zip.extractAllTo(extensionPath, true);
               
-              // Cleanup
-              fs.unlinkSync(tmpFile);
-              
-              if (onProgress) onProgress("Update installed! Restarting...");
-              resolve();
-              
-              // Give the UI a moment to show the success message before reloading
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
-              
-            } catch (err: any) {
-              if (err && (err.code === 'EPERM' || err.message.includes('EPERM'))) {
-                reject(new Error("Permission denied. Please restart Premiere Pro as Administrator to install this update."));
-              } else {
-                reject(err);
+              try {
+                // Try standard extraction first
+                zip.extractAllTo(extensionPath, true);
+                try { fs.unlinkSync(tmpFile); } catch(e) {}
+                
+                if (onProgress) onProgress("Update installed! Restarting...");
+                setTimeout(() => { window.location.reload(); }, 1500);
+                resolve();
+              } catch (err: any) {
+                // Handle Windows Permissions Error
+                if (err && (err.code === 'EPERM' || err.message.includes('EPERM')) && os.platform() === 'win32') {
+                  if (onProgress) onProgress("Requesting Admin permissions...");
+                  const safeExtractDir = path.join(os.tmpdir(), `brandbase-update-ext-${Date.now()}`);
+                  fs.mkdirSync(safeExtractDir, { recursive: true });
+                  zip.extractAllTo(safeExtractDir, true);
+                  
+                  const copyCmd = `xcopy /E /Y /C /Q "${safeExtractDir}\\*" "${extensionPath}\\"`;
+                  const psCommand = `Start-Process cmd -ArgumentList '/c ${copyCmd}' -Verb RunAs -Wait`;
+                  
+                  child_process.exec(`powershell.exe -NoProfile -Command "${psCommand}"`, (error: any) => {
+                    try { fs.unlinkSync(tmpFile); } catch(e) {}
+                    if (error) {
+                      reject(new Error("Update cancelled or failed during Windows administrator prompt."));
+                    } else {
+                      if (onProgress) onProgress("Update installed! Restarting...");
+                      setTimeout(() => { window.location.reload(); }, 1500);
+                      resolve();
+                    }
+                  });
+                } 
+                // Handle Mac Permissions Error
+                else if (err && (err.code === 'EACCES' || err.message.includes('EACCES')) && os.platform() === 'darwin') {
+                  if (onProgress) onProgress("Requesting Admin permissions...");
+                  const safeExtractDir = path.join(os.tmpdir(), `brandbase-update-ext-${Date.now()}`);
+                  fs.mkdirSync(safeExtractDir, { recursive: true });
+                  zip.extractAllTo(safeExtractDir, true);
+                  
+                  const macCmd = `cp -R "${safeExtractDir}/"* "${extensionPath}/"`;
+                  const osaCommand = `osascript -e 'do shell script "${macCmd}" with administrator privileges'`;
+                  
+                  child_process.exec(osaCommand, (error: any) => {
+                    try { fs.unlinkSync(tmpFile); } catch(e) {}
+                    if (error) {
+                      reject(new Error("Update cancelled or failed during Mac administrator prompt."));
+                    } else {
+                      if (onProgress) onProgress("Update installed! Restarting...");
+                      setTimeout(() => { window.location.reload(); }, 1500);
+                      resolve();
+                    }
+                  });
+                } else {
+                  reject(err);
+                }
               }
+            } catch (err) {
+              reject(err);
             }
           });
         }).on('error', (err: any) => {
