@@ -22,7 +22,7 @@ export function TimelinePlacementModal({ asset, onClose }: Props) {
   const [tcSS, setTcSS] = useState("00");
   const [tcFF, setTcFF] = useState("00");
   
-  const [editMode, setEditMode] = useState<"insert" | "overwrite">("insert");
+  const [editMode, setEditMode] = useState<"insert" | "overwrite">("overwrite");
   
   const [videoTrackIndex, setVideoTrackIndex] = useState<number>(0);
   const [audioTrackIndex, setAudioTrackIndex] = useState<number>(0);
@@ -186,28 +186,7 @@ export function TimelinePlacementModal({ asset, onClose }: Props) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Edit Mode</label>
-              <div style={{ display: 'flex', gap: '20px' }}>
-                <label onClick={() => setEditMode('insert')} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', cursor: 'pointer', color: editMode === 'insert' ? 'var(--text-main)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1px solid ${editMode === 'insert' ? 'var(--primary)' : '#4b5563'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', background: editMode === 'insert' ? 'var(--primary)' : 'transparent', flexShrink: 0 }}>
-                    {editMode === 'insert' && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-main)' }} />}
-                  </div>
-                  Insert
-                </label>
-                <label onClick={() => setEditMode('overwrite')} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', cursor: 'pointer', color: editMode === 'overwrite' ? 'var(--text-main)' : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1px solid ${editMode === 'overwrite' ? 'var(--primary)' : '#4b5563'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', background: editMode === 'overwrite' ? 'var(--primary)' : 'transparent', flexShrink: 0 }}>
-                    {editMode === 'overwrite' && <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-main)' }} />}
-                  </div>
-                  Overwrite
-                </label>
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                {editMode === "insert" 
-                  ? "Clips will be shifted to the right to make space for the asset." 
-                  : "Existing clips in the target range will be overwritten."}
-              </div>
-            </div>
+            {/* Removed Edit Mode section per user request */}
           </div>
         </div>
         </div>

@@ -5,10 +5,25 @@ const path = typeof window !== 'undefined' && window.require ? window.require('p
 
 const fsp = fs?.promises;
 
+// Backward-compatible rimraf for Node.js 10 (Premiere 2020)
+export function safeDelete(targetPath: string) {
+    if (!fs || !fs.existsSync(targetPath)) return;
+    const stat = fs.statSync(targetPath);
+    if (stat.isDirectory()) {
+        fs.readdirSync(targetPath).forEach((file: string) => {
+            safeDelete(path.join(targetPath, file));
+        });
+        fs.rmdirSync(targetPath);
+    } else {
+        fs.unlinkSync(targetPath);
+    }
+}
+
 export class NodeFolder {
     isFolder = true;
     isFile = false;
     constructor(public nativePath: string, public name: string) {}
+
 
     async getEntries(): Promise<any[]> {
         const files = await fsp.readdir(this.nativePath, { withFileTypes: true });
@@ -26,7 +41,7 @@ export class NodeFolder {
                 await fsp.copyFile(path.join(this.nativePath, f.name), destPath);
             },
             delete: async () => {
-                await fsp.rm(path.join(this.nativePath, f.name), { recursive: true, force: true });
+                safeDelete(path.join(this.nativePath, f.name));
             },
             getMetadata: async () => {
                 const stat = await fsp.stat(path.join(this.nativePath, f.name));
@@ -44,7 +59,7 @@ export class NodeFolder {
                 await fsp.rename(full, path.join(parent.nativePath, opts.newName));
             },
             delete: async () => {
-                await fsp.rm(full, { recursive: true, force: true });
+                safeDelete(full);
             },
             getMetadata: async () => {
                 const stat = await fsp.stat(full);
@@ -58,7 +73,7 @@ export class NodeFolder {
     }
     
     async delete() {
-        await fsp.rm(this.nativePath, { recursive: true, force: true });
+        safeDelete(this.nativePath);
     }
 }
 
