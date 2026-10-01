@@ -9,10 +9,10 @@ import { libraryManager } from "../filesystem/LibraryManager";
 import { useApplicationData, triggerGlobalReload } from "../hooks/useApplicationData";
 import type { BrandBaseSettings } from "../domain/models";
 
-function SettingRow({ children, detail, control }: { children: string; detail: string; control: React.ReactNode }) {
+function SettingRow({ children, detail, control }: { children: React.ReactNode; detail: string; control: React.ReactNode }) {
   return (
-    <div className="setting-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid var(--border)', flexShrink: 0, minWidth: 0 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', marginRight: '16px', flex: 1, minWidth: 0 }}>
+    <div className="setting-row" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderBottom: '1px solid var(--border)', flexShrink: 0, minWidth: 0 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 150px', minWidth: 0 }}>
         <strong style={{ fontSize: '14px', color: 'var(--text-main)', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{children}</strong>
         <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{detail}</p>
       </div>
