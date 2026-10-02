@@ -174,10 +174,24 @@ export class UxPAssetRepository implements AssetRepository {
     assertLibraryRelativePath(cloned.filePath);
 
     // Persist metadata
-    const assets = await this.getByBrandId(asset.brandId);
-    assets.push(cloned);
-    await this.saveAssetsForBrand(brandFolder, assets);
-    return cloned;
+    try {
+      const assets = await this.getByBrandId(asset.brandId);
+      assets.push(cloned);
+      await this.saveAssetsForBrand(brandFolder, assets);
+      return cloned;
+    } catch (err) {
+      // Rollback the physical file if JSON metadata write fails
+      if (cloned.filePath && !cloned.filePath.startsWith("uxp-token:") && !cloned.filePath.startsWith("absolute:")) {
+        try {
+          const { fsp, path: nodePath } = require('./io');
+          const absPath = nodePath.join(this.libraryManager.getLibraryPath(), cloned.filePath);
+          if (fsp) await fsp.unlink(absPath);
+        } catch (rollbackErr) {
+          console.error("Failed to rollback orphaned asset file:", rollbackErr);
+        }
+      }
+      throw err;
+    }
   }
 
   async update(asset: Asset): Promise<Asset> {
