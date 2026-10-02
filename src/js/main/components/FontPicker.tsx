@@ -208,6 +208,11 @@ export function FontPicker({ value, onChange }: Props) {
         setSystemFonts(fonts);
         setIsLoading(false);
       }
+    }).catch(err => {
+      console.error("Failed to load fonts:", err);
+      if (isMounted) {
+        setIsLoading(false);
+      }
     });
     return () => { isMounted = false; };
   }, []);

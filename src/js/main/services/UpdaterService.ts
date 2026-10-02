@@ -156,6 +156,7 @@ export class UpdaterService {
             }
           });
         }).on('error', (err: any) => {
+          try { file.close(); } catch (e) {}
           fs.unlink(tmpFile, () => {});
           reject(err);
         });
