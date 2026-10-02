@@ -3,7 +3,26 @@ const fs = typeof window !== 'undefined' && window.require ? window.require('fs'
 // @ts-ignore
 const path = typeof window !== 'undefined' && window.require ? window.require('path') : null;
 
-const fsp = fs?.promises;
+// Polyfill fs.promises for older CEP (Node < 10)
+const util = typeof window !== 'undefined' && window.require ? window.require('util') : null;
+const fsp = fs?.promises || (fs && util ? {
+    readdir: util.promisify(fs.readdir),
+    rename: util.promisify(fs.rename),
+    copyFile: fs.copyFile ? util.promisify(fs.copyFile) : async (src: string, dest: string) => {
+        return new Promise((resolve, reject) => {
+            const rd = fs.createReadStream(src);
+            const wr = fs.createWriteStream(dest);
+            rd.on("error", reject);
+            wr.on("error", reject);
+            wr.on("close", resolve);
+            rd.pipe(wr);
+        });
+    },
+    stat: util.promisify(fs.stat),
+    mkdir: util.promisify(fs.mkdir),
+    writeFile: util.promisify(fs.writeFile),
+    readFile: util.promisify(fs.readFile)
+} : null);
 
 // Backward-compatible rimraf for Node.js 10 (Premiere 2020)
 export function safeDelete(targetPath: string) {

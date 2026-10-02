@@ -4,7 +4,7 @@
  *  */
 
 export const polyFillGlobalErrorHandler = (callback?: (error: any) => void) => {
-  if (!Object.hasOwn(window, "onerror")) {
+  if (!Object.prototype.hasOwnProperty.call(window, "onerror")) {
     //@ts-ignore
     window.onerror = (error: {
       message: string;

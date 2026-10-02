@@ -11,5 +11,5 @@ const fallbackId = (): EntityId => {
 };
 
 export const defaultIdGenerator: IdGenerator = {
-  generate: () => (typeof globalThis.crypto?.randomUUID === "function" ? globalThis.crypto.randomUUID() : fallbackId()),
+  generate: () => (typeof window.crypto?.randomUUID === "function" ? window.crypto.randomUUID() : fallbackId()),
 };

@@ -104,11 +104,13 @@ export class UpdaterService {
                   fs.mkdirSync(safeExtractDir, { recursive: true });
                   zip.extractAllTo(safeExtractDir, true);
                   
-                  const copyCmd = `xcopy /E /Y /C /Q "${safeExtractDir}\\*" "${extensionPath}\\"`;
-                  const psCommand = `Start-Process cmd -ArgumentList '/c ${copyCmd}' -Verb RunAs -Wait`;
+                  const batFile = path.join(os.tmpdir(), `brandbase-update-${Date.now()}.bat`);
+                  fs.writeFileSync(batFile, `xcopy /E /Y /C /Q "${safeExtractDir}\\*" "${extensionPath}\\"`);
+                  const psCommand = `Start-Process cmd -ArgumentList '/c ""${batFile}""' -Verb RunAs -Wait`;
                   
                   child_process.exec(`powershell.exe -NoProfile -Command "${psCommand}"`, (error: any) => {
                     try { fs.unlinkSync(tmpFile); } catch(e) {}
+                    try { fs.unlinkSync(batFile); } catch(e) {}
                     if (error) {
                       reject(new Error("Update cancelled or failed during Windows administrator prompt."));
                     } else {
@@ -125,7 +127,8 @@ export class UpdaterService {
                   fs.mkdirSync(safeExtractDir, { recursive: true });
                   zip.extractAllTo(safeExtractDir, true);
                   
-                  const macCmd = `cp -R "${safeExtractDir}/"* "${extensionPath}/"`;
+                  // Escape inner quotes for AppleScript (\\")
+                  const macCmd = `cp -R \\"${safeExtractDir}/\\"* \\"${extensionPath}/\\"`;
                   const osaCommand = `osascript -e 'do shell script "${macCmd}" with administrator privileges'`;
                   
                   child_process.exec(osaCommand, (error: any) => {

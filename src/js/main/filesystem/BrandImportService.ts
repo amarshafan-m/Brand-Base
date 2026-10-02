@@ -10,6 +10,8 @@ const AdmZip = typeof window !== 'undefined' && window.require ? window.require(
 const fs = typeof window !== 'undefined' && window.require ? window.require('fs') : null;
 // @ts-ignore
 const path = typeof window !== 'undefined' && window.require ? window.require('path') : null;
+const util = typeof window !== 'undefined' && window.require ? window.require('util') : null;
+const fsp = fs?.promises || (fs && util ? { mkdir: util.promisify(fs.mkdir), writeFile: util.promisify(fs.writeFile) } : null);
 
 export class BrandImportService {
   constructor(
@@ -82,10 +84,10 @@ export class BrandImportService {
           const destPath = path.join(libPath, newEntryName);
           
           // Ensure parent directory exists asynchronously
-          await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
+          await fsp.mkdir(path.dirname(destPath), { recursive: true });
           
           // Write the file
-          await fs.promises.writeFile(destPath, entry.getData());
+          await fsp.writeFile(destPath, entry.getData());
         }
       }
 
@@ -174,16 +176,16 @@ export class BrandImportService {
         const brandFolderNative = path.join(libPath, 'brands', newBrandId);
         if (fs.existsSync(brandFolderNative)) {
            const finalBrand = await this.brandService.getById(newBrandId);
-           await fs.promises.writeFile(path.join(brandFolderNative, 'brand.json'), JSON.stringify(finalBrand, null, 2));
+           await fsp.writeFile(path.join(brandFolderNative, 'brand.json'), JSON.stringify(finalBrand, null, 2));
            
            const finalAssets = await this.assetService.getByBrandId(newBrandId);
-           await fs.promises.writeFile(path.join(brandFolderNative, 'assets.json'), JSON.stringify(finalAssets, null, 2));
+           await fsp.writeFile(path.join(brandFolderNative, 'assets.json'), JSON.stringify(finalAssets, null, 2));
            
            const finalColors = await this.colorService.getByBrandId(newBrandId);
-           await fs.promises.writeFile(path.join(brandFolderNative, 'colors.json'), JSON.stringify(finalColors, null, 2));
+           await fsp.writeFile(path.join(brandFolderNative, 'colors.json'), JSON.stringify(finalColors, null, 2));
            
            const finalTypo = await this.typographyService.getByBrandId(newBrandId);
-           await fs.promises.writeFile(path.join(brandFolderNative, 'typography.json'), JSON.stringify(finalTypo, null, 2));
+           await fsp.writeFile(path.join(brandFolderNative, 'typography.json'), JSON.stringify(finalTypo, null, 2));
         }
       } catch (forceErr) {
         console.error("Failed to force rewrite json", forceErr);
