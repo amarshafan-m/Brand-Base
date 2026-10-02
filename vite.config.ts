@@ -85,7 +85,7 @@ export default defineConfig({
         chunkFileNames: "assets/[name]-[hash].cjs",
       },
     },
-    target: "chrome74",
+    target: "chrome58",
     outDir,
   },
 });
