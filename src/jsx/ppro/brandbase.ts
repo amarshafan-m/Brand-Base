@@ -106,6 +106,7 @@ var safeImportFiles = function(filePaths: string[], targetBin: any): boolean {
   if (!anyOk) {
     try {
       //@ts-ignore
+      app.enableQE();
       if (typeof qe !== 'undefined' && qe.project) {
         for (var j = 0; j < filePaths.length; j++) {
           //@ts-ignore
@@ -295,6 +296,7 @@ export const bbPlaceOnTimeline = (nativePath: string, placement: any) => {
 
   if (!inserted) {
     try { //@ts-ignore
+      app.enableQE();
       if (typeof qe !== 'undefined' && qe.project) { //@ts-ignore
         var qeSeq = qe.project.getActiveSequence(); if (qeSeq) { //@ts-ignore
           var qeTrack = isAudioOnly ? qeSeq.getAudioTrackAt(at2) : qeSeq.getVideoTrackAt(vt2);
@@ -400,6 +402,7 @@ export const bbCreateTextLayer = (fontFamily: string, fontWeight: string, fontSi
   var b = parseInt(hex.substring(4, 6), 16);
   var created = false;
   try { //@ts-ignore
+    app.enableQE();
     if (typeof qe !== 'undefined' && qe.project && qe.project.getActiveSequence) { //@ts-ignore
       var qeSeq = qe.project.getActiveSequence(); //@ts-ignore
       if (qeSeq && typeof qeSeq.addGraphicsLayer === 'function') { //@ts-ignore

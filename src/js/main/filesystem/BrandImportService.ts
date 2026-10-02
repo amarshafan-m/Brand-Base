@@ -41,7 +41,12 @@ export class BrandImportService {
       if (!manifestEntry) throw new Error("Invalid brand package: Missing brand.json manifest.");
 
       const manifestContent = zip.readAsText(manifestEntry);
-      const manifest = JSON.parse(manifestContent);
+      let manifest: any;
+      try {
+        manifest = JSON.parse(manifestContent);
+      } catch (e) {
+        throw new Error("Invalid brand package: brand.json is corrupted.");
+      }
 
       if (manifest.type !== "brand_package" || !manifest.brand) {
         throw new Error("Invalid brand package format.");

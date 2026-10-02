@@ -2,6 +2,8 @@
 const fs = typeof window !== 'undefined' && window.require ? window.require('fs') : null;
 // @ts-ignore
 const path = typeof window !== 'undefined' && window.require ? window.require('path') : null;
+const util = typeof window !== 'undefined' && window.require ? window.require('util') : null;
+const fsp = fs?.promises || (fs && util ? { readFile: util.promisify(fs.readFile) } : null);
 
 export interface LibraryValidationResult {
   valid: boolean;
@@ -15,7 +17,7 @@ export class LibraryValidator {
       return { valid: true }; // New library
     }
     try {
-      const data = JSON.parse(await fs?.promises.readFile(libraryJsonPath, 'utf8'));
+      const data = JSON.parse(await fsp.readFile(libraryJsonPath, 'utf8'));
       if (typeof data.schemaVersion !== "number") {
          return { valid: false, reason: "Missing schema version" };
       }

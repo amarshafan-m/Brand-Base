@@ -66,6 +66,14 @@ export function MediaPlayer({ src, type, poster }: MediaPlayerProps) {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      // Clean up global listeners if unmounted while dragging
+      if (mouseMoveHandler.current) window.removeEventListener('mousemove', mouseMoveHandler.current);
+      if (mouseUpHandler.current) window.removeEventListener('mouseup', mouseUpHandler.current);
+    };
+  }, []);
+
   const togglePlay = () => {
     if (!mediaRef.current) return;
     if (isPlaying) {
