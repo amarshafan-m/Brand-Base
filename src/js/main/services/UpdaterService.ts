@@ -79,6 +79,12 @@ export class UpdaterService {
           }
           
           res.pipe(file);
+
+          res.on('error', (err: any) => {
+            file.close();
+            fs.unlink(tmpFile, () => {});
+            reject(new Error("Network connection lost during download: " + err.message));
+          });
           
           file.on('finish', () => {
             file.close();

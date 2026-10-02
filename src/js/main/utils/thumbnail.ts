@@ -41,12 +41,14 @@ export async function generateThumbnail(
 
         try {
           const buffer = Buffer.from(base64Data, "base64");
-          nodeFs.promises.writeFile(thumbnailFilePath, buffer)
-            .then(() => resolve(true))
-            .catch((err: any) => {
+          nodeFs.writeFile(thumbnailFilePath, buffer, (err: any) => {
+            if (err) {
               console.error("Failed to write thumbnail file", err);
               resolve(false);
-            });
+            } else {
+              resolve(true);
+            }
+          });
         } catch (err) {
           console.error("Failed to write thumbnail file:", err);
           resolve(false);
@@ -91,12 +93,14 @@ export async function extractMogrtThumbnail(
 
       if (thumbnailEntry) {
         const buffer = thumbnailEntry.getData();
-        nodeFs.promises.writeFile(thumbnailFilePath, buffer)
-          .then(() => resolve(true))
-          .catch((err: any) => {
+        nodeFs.writeFile(thumbnailFilePath, buffer, (err: any) => {
+          if (err) {
             console.error("Failed to write mogrt thumbnail file", err);
             resolve(false);
-          });
+          } else {
+            resolve(true);
+          }
+        });
       } else {
         resolve(false);
       }

@@ -74,7 +74,8 @@ export function useAssetImport(activeBrandId: string | undefined, allowedExtensi
           const name = getBaseName(nodePath.basename(filePath));
           const extension = getExtension(nodePath.basename(filePath));
           const type = detectAssetType(nodePath.basename(filePath));
-          const stat = await nodeFs.promises.stat(filePath);
+          const { fsp } = require('../filesystem/io');
+          const stat = fsp ? await fsp.stat(filePath) : nodeFs.statSync(filePath);
           const fileSize = stat.size;
 
           const asset = await applicationContainer.assetService.create({

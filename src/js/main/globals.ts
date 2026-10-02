@@ -26,7 +26,8 @@ export const uxp: any = {
            copyTo: async (destFolder, opts) => {
                const dest = path.join(destFolder.nativePath, name);
                if (!opts.overwrite && fs.existsSync(dest)) throw new Error("EntryExists");
-               await fs.promises.copyFile(token, dest);
+               const fsp = fs.promises || require('./filesystem/io').fsp;
+               if (fsp) await fsp.copyFile(token, dest);
            }
         }
       },

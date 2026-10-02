@@ -1,7 +1,7 @@
 import type { AssetRepository } from "../repositories/contracts";
 import type { Asset, AssetSearchCriteria, EntityId } from "../domain/models";
 import type { LibraryManager } from "./LibraryManager";
-import { ensureFolder, getFileIfExists, getFolderIfExists, readJson, validateEntryName, writeJsonSafe } from "./io";
+import { ensureFolder, getFileIfExists, getFolderIfExists, readJson, validateEntryName, writeJsonSafe, fsp } from "./io";
 import { cloneValue } from "../utils/clone";
 import { matchesAssetCriteria } from "../utils/asset-query";
 import { uxp } from "../globals";
@@ -122,7 +122,7 @@ export class UxPAssetRepository implements AssetRepository {
              copyTo: async (destFolder: any, opts: any) => {
                  const destPath = nodePath.join(destFolder.nativePath, nodePath.basename(token));
                  if (!opts.overwrite && nodeFs.existsSync(destPath)) throw new Error("EntryExists");
-                 await nodeFs.promises.copyFile(token, destPath);
+                 if (fsp) await fsp.copyFile(token, destPath);
              }
           };
         } else {
@@ -225,7 +225,7 @@ export class UxPAssetRepository implements AssetRepository {
       if (!isShared) {
         try {
           const p = typeof window !== 'undefined' && window.require ? window.require('path') : require('path');
-          const fsp = typeof window !== 'undefined' && window.require ? window.require('fs').promises : require('fs').promises;
+          // using global fsp from io.ts
           const f = typeof window !== 'undefined' && window.require ? window.require('fs') : require('fs');
           
           const libPath = this.libraryManager.getLibraryPath();

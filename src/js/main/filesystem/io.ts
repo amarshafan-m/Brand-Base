@@ -5,7 +5,7 @@ const path = typeof window !== 'undefined' && window.require ? window.require('p
 
 // Polyfill fs.promises for older CEP (Node < 10)
 const util = typeof window !== 'undefined' && window.require ? window.require('util') : null;
-const fsp = fs?.promises || (fs && util ? {
+export const fsp = fs?.promises || (fs && util ? {
     readdir: util.promisify(fs.readdir),
     rename: util.promisify(fs.rename),
     copyFile: fs.copyFile ? util.promisify(fs.copyFile) : async (src: string, dest: string) => {
@@ -21,7 +21,8 @@ const fsp = fs?.promises || (fs && util ? {
     stat: util.promisify(fs.stat),
     mkdir: util.promisify(fs.mkdir),
     writeFile: util.promisify(fs.writeFile),
-    readFile: util.promisify(fs.readFile)
+    readFile: util.promisify(fs.readFile),
+    unlink: util.promisify(fs.unlink)
 } : null);
 
 // Backward-compatible rimraf for Node.js 10 (Premiere 2020)
