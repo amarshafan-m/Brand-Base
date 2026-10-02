@@ -144,7 +144,13 @@ export async function getFolderIfExists(base: any, folderName: string): Promise<
 export async function writeJsonSafe(base: any, filename: string, data: any): Promise<void> {
     if (!fsp || !path) return;
     const basePath = typeof base === "string" ? base : base.nativePath;
-    await fsp.writeFile(path.join(basePath, filename), JSON.stringify(data, null, 2), "utf8");
+    const targetPath = path.join(basePath, filename);
+    const tempPath = targetPath + ".tmp";
+    
+    // Write to a temporary file first
+    await fsp.writeFile(tempPath, JSON.stringify(data, null, 2), "utf8");
+    // Atomic rename replaces the target file safely without risk of partial corruption
+    await fsp.rename(tempPath, targetPath);
 }
 
 export async function recoverFromBackup(base: any, filename: string): Promise<void> {

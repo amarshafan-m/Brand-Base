@@ -78,9 +78,11 @@ export class UxPBrandRepository implements BrandRepository {
     if (!brandFolder) return;
 
     try {
-      await (brandFolder as any).delete();
+      // Archive the folder by renaming it
+      const newName = `deleted-${id}-${Date.now()}`;
+      await (brandFolder as any).rename(brandsFolder, { newName });
     } catch (e) {
-      console.error("Failed to delete brand folder:", e);
+      console.error("Failed to archive brand folder:", e);
       throw new Error("Could not delete brand folder. Brand was not deleted.");
     }
   }

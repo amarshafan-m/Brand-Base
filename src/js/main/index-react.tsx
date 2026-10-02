@@ -19,6 +19,16 @@ window.addEventListener("error", (event) => {
   console.error("Uncaught exception:", event.error);
 });
 
+// CRITICAL FIX: Prevent CEP Panel from navigating away if a user drops a file!
+window.addEventListener("dragover", (e) => e.preventDefault(), false);
+window.addEventListener("drop", (e) => e.preventDefault(), false);
+
+// CRITICAL FIX: Disable right-click context menu to prevent showing 'Inspect Element' in production
+const isDebug = window.location.search.includes("debug") || (typeof process !== 'undefined' && process.env?.NODE_ENV !== "production");
+if (!isDebug) {
+  window.addEventListener("contextmenu", (e) => e.preventDefault(), false);
+}
+
 const renderApp = () => {
   const appElement = document.getElementById("app");
   if (!appElement) return;
