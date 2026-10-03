@@ -105,7 +105,7 @@ export class UpdaterService {
                 resolve();
               } catch (err: any) {
                 // Handle Windows Permissions Error
-                if (err && (err.code === 'EPERM' || err.message.includes('EPERM')) && os.platform() === 'win32') {
+                if (err && (err.code === 'EPERM' || err.message.includes('EPERM') || (err.code === 'ENOENT' && err.message.includes('chmod'))) && os.platform() === 'win32') {
                   if (onProgress) onProgress("Requesting Admin permissions...");
                   const safeExtractDir = path.join(os.tmpdir(), `brandbase-update-ext-${Date.now()}`);
                   ensureFolderSync(safeExtractDir);

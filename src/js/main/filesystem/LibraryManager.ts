@@ -29,13 +29,15 @@ export class LibraryManager {
     let folder = result.data[0];
     
     // CEP showOpenDialog can return file:// URIs with URL-encoded characters (spaces → %20).
-    // Strip the scheme and decode to get a clean filesystem path.
-    if (folder.startsWith("file:///")) {
-      folder = decodeURIComponent(folder.slice("file://".length));
-    } else if (folder.startsWith("file://")) {
-      folder = decodeURIComponent(folder.slice("file://".length));
-    } else {
-      folder = decodeURIComponent(folder);
+    folder = decodeURIComponent(folder);
+    if (folder.startsWith("file://")) {
+      const isWin = typeof navigator !== 'undefined' ? navigator.platform.toLowerCase().includes('win') : (os && os.platform() === 'win32');
+      if (isWin) {
+        folder = folder.replace(/^file:\/\/\/?/, '');
+        folder = folder.replace(/\//g, '\\');
+      } else {
+        folder = folder.replace(/^file:\/\//, '');
+      }
     }
     
     if (!fs.existsSync(folder)) {
@@ -63,8 +65,17 @@ export class LibraryManager {
   }
 
   async loadLibrary(): Promise<boolean> {
-    const token = this.getPersistedToken();
-    if (!token || !fs.existsSync(token)) return false;
+    let token = this.getPersistedToken();
+    if (!token) return false;
+    
+    // Auto-fix corrupted paths from previous versions (e.g. /C:/Users/...)
+    const isWin = typeof navigator !== 'undefined' ? navigator.platform.toLowerCase().includes('win') : (os && os.platform() === 'win32');
+    if (isWin && token.startsWith('/') && token.charAt(2) === ':') {
+      token = token.substring(1).replace(/\//g, '\\');
+      this.persistToken(token); // Update it in storage automatically
+    }
+
+    if (!fs.existsSync(token)) return false;
 
     const result = await libraryValidator.validate(token);
     if (!result.valid) return false;
