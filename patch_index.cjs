@@ -1,29 +1,10 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob: file:; script-src * 'self' 'unsafe-inline' 'unsafe-eval' file:; style-src * 'self' 'unsafe-inline' file:; img-src * 'self' data: blob: file: https:; media-src * 'self' blob: file: data:; connect-src * 'self' https: http: file:; font-src * 'self' data: file:;" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brand Base</title>
-  
+const fs = require('fs');
+const path = require('path');
 
-</head>
-  <body>
-    <div id="app"></div>
-    <!-- Uncomment to debug the desired template -->
+const indexPath = path.join(__dirname, 'src/js/main/index.html');
+let html = fs.readFileSync(indexPath, 'utf8');
 
-    
-    <!-- Polyfill CJS exports for older Windows CEP engines (Chrome 74) -->
-    <script>
-      if (typeof exports === 'undefined') { var exports = {}; }
-      if (typeof module === 'undefined') { var module = { exports: exports }; }
-      if (typeof queueMicrotask !== 'function') {
-        window.queueMicrotask = function (callback) {
-          Promise.resolve().then(callback).catch(function(e) { setTimeout(function() { throw e; }); });
-        };
-      }
-    </script>
-    
+const debugScript = `
     <script>
       window.onerror = function(message, source, lineno, colno, error) {
         document.body.innerHTML = '<div style="color:red; padding: 20px; font-family: sans-serif; background: white; z-index: 99999; position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: auto;">' +
@@ -41,8 +22,12 @@
         '</div>';
       });
     </script>
+`;
 
-    <script type="module" src="./index-react.tsx"></script>
-    
-  </body>
-</html>
+if (!html.includes('window.onerror = function(message')) {
+  html = html.replace('<script type="module"', debugScript + '\n    <script type="module"');
+  fs.writeFileSync(indexPath, html);
+  console.log('Patched index.html with debug script');
+} else {
+  console.log('Already patched');
+}

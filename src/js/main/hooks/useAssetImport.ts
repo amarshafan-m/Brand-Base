@@ -4,6 +4,7 @@ import { triggerGlobalReload } from "./useApplicationData";
 import { getBaseName, detectAssetType, getExtension } from "../utils/file-classification";
 import { AssetImportQueue } from "../services/AssetImportQueue";
 import { generateThumbnail, extractMogrtThumbnail } from "../utils/thumbnail";
+import { ensureFolderSync } from '../filesystem/io';
 
 export interface DuplicatePrompt {
   file: any;
@@ -120,7 +121,7 @@ export function useAssetImport(activeBrandId: string | undefined, allowedExtensi
                   if (fs) {
                      const dir = nodePath.dirname(absoluteThumbPath);
                      if (!fs.existsSync(dir)) {
-                         fs.mkdirSync(dir, { recursive: true });
+                         ensureFolderSync(dir);
                      }
                   }
 

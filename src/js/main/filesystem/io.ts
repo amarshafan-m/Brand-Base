@@ -64,7 +64,20 @@ export class NodeFolder {
 
 
     async getEntries(): Promise<any[]> {
-        const files = await fsp.readdir(this.nativePath, { withFileTypes: true });
+        const rawFiles = await fsp.readdir(this.nativePath);
+        const files: any[] = [];
+        for (const fName of rawFiles) {
+            // Some older Node versions return strings even with withFileTypes
+            const name = typeof fName === 'string' ? fName : fName.name;
+            const fullPath = path.join(this.nativePath, name);
+            try {
+                const stat = await fsp.stat(fullPath);
+                files.push({ name, isDirectory: () => stat.isDirectory(), isFile: () => stat.isFile() });
+            } catch (e) {
+                // Ignore broken symlinks
+            }
+        }
+        
         return files.map((f: any) => ({
             isFolder: f.isDirectory(),
             isFile: f.isFile(),
@@ -118,10 +131,44 @@ export class NodeFolder {
 export async function ensureFolder(base: any, folderName: string): Promise<NodeFolder> {
     const basePath = typeof base === "string" ? base : base.nativePath;
     const full = path.join(basePath, folderName);
-    if (!fs.existsSync(full)) {
-        await fsp.mkdir(full, { recursive: true });
+    
+    // Polyfill for recursive mkdir (Node < 10.12)
+    const dirs: string[] = [];
+    let current = full;
+    while (!fs.existsSync(current)) {
+        dirs.unshift(current);
+        const parent = path.dirname(current);
+        if (parent === current) break;
+        current = parent;
     }
+    for (const d of dirs) {
+        try {
+            await fsp.mkdir(d);
+        } catch (e: any) {
+            if (e.code !== 'EEXIST') throw e;
+        }
+    }
+    
     return new NodeFolder(full, folderName);
+}
+
+export function ensureFolderSync(basePath: string, folderName?: string): void {
+    const full = folderName ? path.join(basePath, folderName) : basePath;
+    const dirs: string[] = [];
+    let current = full;
+    while (!fs.existsSync(current)) {
+        dirs.unshift(current);
+        const parent = path.dirname(current);
+        if (parent === current) break;
+        current = parent;
+    }
+    for (const d of dirs) {
+        try {
+            fs.mkdirSync(d);
+        } catch (e: any) {
+            if (e.code !== 'EEXIST') throw e;
+        }
+    }
 }
 
 export async function getFileIfExists(base: any, filename: string): Promise<string | null> {

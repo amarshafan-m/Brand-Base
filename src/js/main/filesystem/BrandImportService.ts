@@ -3,7 +3,7 @@ import { AssetService } from '../services/AssetService';
 import { ColorService } from '../services/ColorService';
 import { TypographyService } from '../services/TypographyService';
 import { LibraryManager } from './LibraryManager';
-
+import { ensureFolder, ensureFolderSync } from './io';
 // @ts-ignore
 const AdmZip = typeof window !== 'undefined' && window.require ? window.require('adm-zip') : null;
 // @ts-ignore
@@ -65,7 +65,7 @@ export class BrandImportService {
       
       const brandLibFolder = path.join(libPath, 'brands', newBrandId);
       if (!fs.existsSync(brandLibFolder)) {
-        fs.mkdirSync(brandLibFolder, { recursive: true });
+        ensureFolderSync(brandLibFolder);
       }
 
       // Security: Direct zip extraction prevents Zip Slip and removes sync IO operations
@@ -89,7 +89,8 @@ export class BrandImportService {
           const destPath = path.join(libPath, newEntryName);
           
           // Ensure parent directory exists asynchronously
-          await fsp.mkdir(path.dirname(destPath), { recursive: true });
+          const pDir = path.dirname(destPath);
+          await ensureFolder(path.dirname(pDir), path.basename(pDir));
           
           // Write the file
           await fsp.writeFile(destPath, entry.getData());

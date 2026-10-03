@@ -65,7 +65,7 @@ export function LibraryPage({ page, onShowNotice, onNavigate, searchQuery = "" }
   const [activeTagFilter, setActiveTagFilter] = useState<string | null>(null);
 
   // Collect all unique tags across assets for filter pills
-  const allTags = Array.from(new Set((assets || []).flatMap(a => a.tags || [])));
+  const allTags = Array.from(new Set((assets || []).reduce((acc: string[], a) => acc.concat(a.tags || []), [])));
 
   useEffect(() => {
     if (settings?.gridSize && typeof settings.gridSize === "number") {

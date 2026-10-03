@@ -39,8 +39,7 @@ export class LibraryManager {
     }
     
     if (!fs.existsSync(folder)) {
-      const { fsp } = require('./io');
-      if (fsp) await fsp.mkdir(folder, { recursive: true });
+      await ensureFolder(path.dirname(folder), path.basename(folder));
     }
 
     const libraryFile = await getFileIfExists(folder, "library.json");

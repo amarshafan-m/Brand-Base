@@ -1,5 +1,6 @@
 import { applicationContainer } from "../app/application";
 import { csi } from "../../lib/utils/bolt";
+import { ensureFolderSync } from "../filesystem/io";
 
 const https = typeof window !== 'undefined' && window.require ? window.require('https') : null;
 const fs = typeof window !== 'undefined' && window.require ? window.require('fs') : null;
@@ -107,7 +108,7 @@ export class UpdaterService {
                 if (err && (err.code === 'EPERM' || err.message.includes('EPERM')) && os.platform() === 'win32') {
                   if (onProgress) onProgress("Requesting Admin permissions...");
                   const safeExtractDir = path.join(os.tmpdir(), `brandbase-update-ext-${Date.now()}`);
-                  fs.mkdirSync(safeExtractDir, { recursive: true });
+                  ensureFolderSync(safeExtractDir);
                   zip.extractAllTo(safeExtractDir, true);
                   
                   const batFile = path.join(os.tmpdir(), `brandbase-update-${Date.now()}.bat`);
@@ -130,7 +131,7 @@ export class UpdaterService {
                 else if (err && (err.code === 'EACCES' || err.message.includes('EACCES')) && os.platform() === 'darwin') {
                   if (onProgress) onProgress("Requesting Admin permissions...");
                   const safeExtractDir = path.join(os.tmpdir(), `brandbase-update-ext-${Date.now()}`);
-                  fs.mkdirSync(safeExtractDir, { recursive: true });
+                  ensureFolderSync(safeExtractDir);
                   zip.extractAllTo(safeExtractDir, true);
                   
                   // Escape inner quotes for AppleScript (\\")
