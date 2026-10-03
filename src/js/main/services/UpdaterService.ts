@@ -16,9 +16,11 @@ export interface UpdateInfo {
   downloadUrl: string | null;
 }
 
+import packageJson from "../../../../package.json";
+
 export class UpdaterService {
   private repo = "amarshafan-m/Brand-Base";
-  private currentVersion = "1.0.0"; // Should ideally be read from package.json/manifest, hardcoded for now based on v1.0.0
+  private currentVersion = packageJson.version;
 
   public async checkForUpdates(): Promise<UpdateInfo> {
     if (!https) return { hasUpdate: false, latestVersion: this.currentVersion, releaseNotes: "", downloadUrl: null };
