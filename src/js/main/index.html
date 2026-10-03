@@ -13,6 +13,11 @@
     <!-- Uncomment to debug the desired template -->
 
     
+    <!-- Polyfill CJS exports for older Windows CEP engines (Chrome 74) -->
+    <script>
+      if (typeof exports === 'undefined') { var exports = {}; }
+      if (typeof module === 'undefined') { var module = { exports: exports }; }
+    </script>
     <script type="module" src="./index-react.tsx"></script>
     
   </body>
