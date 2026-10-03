@@ -1,8 +1,8 @@
 {
   "name": "com.brandbase.premiere.cep",
   "private": true,
-  "version": "1.0.2",
-  "author": "Aishwarya Mishra",
+  "version": "1.0.3",
+  "author": "Amarshafan M",
   "type": "module",
   "scripts": {
     "dev": "vite",
