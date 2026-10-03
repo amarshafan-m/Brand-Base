@@ -15,7 +15,7 @@
     "delsymlink": "cross-env BOLT_ACTION=delsymlink vite"
   },
   "dependencies": {
-    "adm-zip": "^0.6.1",
+    "adm-zip": "0.5.10",
     "font-list": "^2.1.0",
     "opentype.js": "^2.0.0",
     "react": "^19.1.0",
