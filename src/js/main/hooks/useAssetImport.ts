@@ -4,7 +4,7 @@ import { triggerGlobalReload } from "./useApplicationData";
 import { getBaseName, detectAssetType, getExtension } from "../utils/file-classification";
 import { AssetImportQueue } from "../services/AssetImportQueue";
 import { generateThumbnail, extractMogrtThumbnail } from "../utils/thumbnail";
-import { ensureFolderSync } from '../filesystem/io';
+import { ensureFolderSync, fsp } from '../filesystem/io';
 
 export interface DuplicatePrompt {
   file: any;
@@ -75,7 +75,6 @@ export function useAssetImport(activeBrandId: string | undefined, allowedExtensi
           const name = getBaseName(nodePath.basename(filePath));
           const extension = getExtension(nodePath.basename(filePath));
           const type = detectAssetType(nodePath.basename(filePath));
-          const { fsp } = require('../filesystem/io');
           const stat = fsp ? await fsp.stat(filePath) : nodeFs.statSync(filePath);
           const fileSize = stat.size;
 
