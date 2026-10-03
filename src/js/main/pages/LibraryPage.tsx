@@ -210,10 +210,8 @@ export function LibraryPage({ page, onShowNotice, onNavigate, searchQuery = "" }
               }
 
               return (
-              <a 
+              <div 
                 className="asset-card"
-                href={fileUri || "#"}
-                download={asset.name}
                 key={asset.id} 
                 onClick={(e) => { e.preventDefault(); setSelectedAssetId(asset.id); }}
                 onDoubleClick={(e) => {
@@ -238,17 +236,16 @@ export function LibraryPage({ page, onShowNotice, onNavigate, searchQuery = "" }
                   }
                 }}
                 onDragEnd={(e) => {
-                  // FAKE DRAG DROP HACK FOR MOGRTS
-                  // If Premiere's timeline rejects the MOGRT drop, dropEffect will be "none".
+                  // If Premiere's timeline rejects the drop, dropEffect will be "none".
                   // In this case, since they finished dragging, we just programmatically insert it!
-                  if (asset.type === 'mogrt' && e.dataTransfer.dropEffect === "none") {
+                  if (e.dataTransfer.dropEffect === "none") {
                     applicationContainer.premiereTimelineService.placeAssetOnTimeline(asset, {
                       mode: 'playhead',
                       editMode: 'insert',
                       videoTrackIndex: 0,
                       audioTrackIndex: 0
                     }).catch(err => {
-                      if (onShowNotice) onShowNotice("Failed to place MOGRT: " + err.message);
+                      if (onShowNotice) onShowNotice("Failed to place asset: " + err.message);
                     });
                   }
                 }}
@@ -392,7 +389,7 @@ export function LibraryPage({ page, onShowNotice, onNavigate, searchQuery = "" }
                     <span>{formatSize(asset.size)}</span>
                   </div>
                 </div>
-              </a>
+              </div>
             )})}
           </div>
         )}
