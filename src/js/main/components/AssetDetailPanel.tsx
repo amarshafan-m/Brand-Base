@@ -104,7 +104,7 @@ export function AssetDetailPanel({ asset, onClose, onShowNotice }: Props) {
       await applicationContainer.premiereAssetImportService.importAsset(asset);
       if (onShowNotice) onShowNotice("Successfully imported to Premiere Project.");
     } catch (e: any) {
-      if (onShowNotice) onShowNotice(`Import failed: ${e.message}`); else console.error(e.message);
+      alert(`Import failed:\n\n${e.message || String(e)}`);
     } finally {
       setImporting(false);
     }

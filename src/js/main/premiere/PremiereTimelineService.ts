@@ -40,6 +40,10 @@ export class PremiereTimelineService {
 
     if (asset.filePath.startsWith('absolute:')) {
       nativePath = asset.filePath.substring(9);
+      const isWin = typeof navigator !== 'undefined' ? navigator.platform.toLowerCase().includes('win') : false;
+      if (isWin && nativePath.startsWith('/') && nativePath.charAt(2) === ':') {
+        nativePath = nativePath.substring(1).replace(/\//g, '\\');
+      }
     } else {
       // Resolve through library path directly using Node.js — most reliable cross-platform
       const libPath = this.libraryManager.getLibraryPath();

@@ -200,6 +200,13 @@ export function LibraryPage({ page, onShowNotice, onNavigate, searchQuery = "" }
                 const rawAbsPath = `${libPath}${separator}${normalizedAssetPath}`;
                 absPath = rawAbsPath.replace(/([^:])\/\/+/g, '$1/');
                 fileUri = "file://" + encodeURI(absPath);
+              } else if (asset.filePath && asset.filePath.startsWith('absolute:')) {
+                absPath = asset.filePath.substring(9);
+                const isWin = typeof navigator !== 'undefined' ? navigator.platform.toLowerCase().includes('win') : false;
+                if (isWin && absPath.startsWith('/') && absPath.charAt(2) === ':') {
+                  absPath = absPath.substring(1).replace(/\//g, '\\');
+                }
+                fileUri = "file://" + encodeURI(absPath);
               }
 
               return (

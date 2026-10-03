@@ -25,6 +25,10 @@ export class PremiereAssetImportService {
     // Handle absolute paths (set during import from file chooser)
     if (asset.filePath.startsWith('absolute:')) {
       nativePath = asset.filePath.substring(9);
+      const isWin = typeof navigator !== 'undefined' ? navigator.platform.toLowerCase().includes('win') : false;
+      if (isWin && nativePath.startsWith('/') && nativePath.charAt(2) === ':') {
+        nativePath = nativePath.substring(1).replace(/\//g, '\\');
+      }
     } else {
       // Resolve through library folder structure
       const libPath = this.libraryManager.getLibraryPath();

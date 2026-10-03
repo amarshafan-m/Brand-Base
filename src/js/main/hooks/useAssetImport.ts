@@ -157,6 +157,7 @@ export function useAssetImport(activeBrandId: string | undefined, allowedExtensi
         },
         (filePath, error) => {
           console.error(`Failed to import ${filePath}:`, error);
+          alert(`Error importing file:\n${filePath}\n\nReason: ${error.message || String(error)}`);
         }
       );
       
