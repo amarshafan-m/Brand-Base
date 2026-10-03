@@ -215,7 +215,7 @@ export function SettingsPage({ onShowNotice }: { onShowNotice: (notice: string) 
                 </div>
               } 
               detail="Connect with the developer.">
-              Developer: Amarshafan M
+              Developer: Aishwarya Mishra
             </SettingRow>
           </div>
         </div>
